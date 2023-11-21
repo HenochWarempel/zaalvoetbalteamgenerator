@@ -13,7 +13,8 @@ const players = [
     { name: 'Mathew', value: 7.5 },
     { name: 'Mesach', value: 7.5 },
     { name: 'Ruben', value: 9 },
-    { name: 'Samuel', value: 8 },
+    { name: 'Mark', value: 8 },
+    { name: 'Stephan', value: 8 },
     { name: 'Tom B', value: 8 },
     { name: 'Tom P', value: 7.5 },
 ];
