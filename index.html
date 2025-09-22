@@ -1,30 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Zaalvoetbal-teamgenerator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaalvoetbal-teamgenerator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <h1>⚽ Zaalvoetbal-teamgenerator ⚽</h1>
-    </header>
-    <main>
-        <section class="player-list">
-            <h2>Spelerslijst:</h2>
-            <ul id="players"></ul>
-            <button id="formTeams">Vorm teams</button>
-        </section>
-<h2>Deelnemers:</h2>
-<div id="participants"></div>
-        <section class="team-list">
-            <h2>Teams:</h2>
-            <div id="team1"></div>
-            <div id="team2"></div>
-        </section>
-<button id="generateAgain">Genereer opnieuw</button>
-    </main>
-    <script src="script.js"></script>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+
+  <h1 class="text-3xl font-bold mb-6">Zaalvoetbal-teamgenerator</h1>
+
+  <!-- Spelerselectie -->
+  <div id="players" class="grid grid-cols-2 md:grid-cols-3 gap-3 w-full max-w-lg mb-6"></div>
+
+  <!-- Knoppen -->
+  <div class="flex gap-4">
+    <button id="generate" 
+      class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow">
+      Genereer teams
+    </button>
+    <button id="back"
+      class="hidden bg-gray-500 hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg shadow">
+      Ga terug
+    </button>
+  </div>
+
+  <!-- Resultaat -->
+  <div id="result" class="mt-8 w-full max-w-2xl"></div>
+
+  <script>
+    // Spelerslijst
+    const players = [
+      { name: "Arhan", rank: 6.25 },
+      { name: "David", rank: 7.6 },
+      { name: "Henoch", rank: 7.8 },
+      { name: "Jan", rank: 8.4 },
+      { name: "John", rank: 6.8 },
+      { name: "Just", rank: 7.4 },
+      { name: "Mathew", rank: 6.1 },
+      { name: "Mesach", rank: 6.6 },
+      { name: "Stephan", rank: 8.9 },
+      { name: "Tom B", rank: 7.9 },
+      { name: "Tom P", rank: 6.8 }
+    ];
+
+    const container = document.getElementById("players");
+    const generateBtn = document.getElementById("generate");
+    const backBtn = document.getElementById("back");
+    const resultDiv = document.getElementById("result");
+
+    // Init knoppen
+    players.forEach((p) => {
+      const btn = document.createElement("button");
+      btn.textContent = p.name;
+      btn.className =
+        "px-4 py-2 rounded-lg border border-gray-400 bg-white hover:bg-gray-200";
+      btn.onclick = () => {
+        btn.classList.toggle("bg-green-400");
+        btn.classList.toggle("text-white");
+        p.selected = !p.selected;
+      };
+      p.selected = false;
+      container.appendChild(btn);
+    });
+
+    let allSplits = [];
+    let currentIndex = -1;
+    let baselineDiff = null; // baseline opslaan
+
+    generateBtn.onclick = () => {
+      const selected = players.filter((p) => p.selected);
+      if (selected.length < 6) {
+        alert("Minimaal 6 spelers selecteren!");
+        return;
+      }
+      if (selected.length > 11) {
+        alert("Maximaal 11 spelers!");
+        return;
+      }
+
+      // Als dit de eerste keer is → bereken alle mogelijke splits
+      if (allSplits.length === 0) {
+        allSplits = generateAllSplits(selected);
+        currentIndex = 0;
+        baselineDiff = allSplits[0].diff; // eerste is altijd baseline (meest eerlijk)
+      } else {
+        currentIndex++;
+        if (currentIndex >= allSplits.length) {
+          alert("Geen nieuwe combinaties meer.");
+          currentIndex = allSplits.length - 1;
+          return;
+        }
+      }
+
+      showResult(allSplits, currentIndex);
+      if (currentIndex > 0) backBtn.classList.remove("hidden");
+    };
+
+    backBtn.onclick = () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        showResult(allSplits, currentIndex);
+        if (currentIndex === 0) backBtn.classList.add("hidden");
+      }
+    };
+
+    // ---- Berekening splits ----
+    function generateAllSplits(selected) {
+      const n = selected.length;
+      const splits = [];
+      const seen = new Set(); // om duplicaten te voorkomen
+      const total = 1 << n;
+
+      for (let mask = 1; mask < total - 1; mask++) {
+        const teamA = [], teamB = [];
+        for (let i = 0; i < n; i++) {
+          if (mask & (1 << i)) teamA.push(selected[i]);
+          else teamB.push(selected[i]);
+        }
+
+        if (!isValidTeamSplit(teamA.length, teamB.length, n)) continue;
+
+        // normaliseer teams
+        const namesA = teamA.map(p => p.name).sort().join(",");
+        const namesB = teamB.map(p => p.name).sort().join(",");
+        const key1 = namesA + "|" + namesB;
+        const key2 = namesB + "|" + namesA;
+        if (seen.has(key1) || seen.has(key2)) continue;
+        seen.add(key1);
+        seen.add(key2);
+
+        const avgA = calcWeightedAvg(teamA);
+        const avgB = calcWeightedAvg(teamB);
+        const diff = Math.abs(avgA - avgB);
+
+        splits.push({ teamA, teamB, avgA, avgB, diff });
+      }
+
+      splits.sort((a, b) => a.diff - b.diff);
+      return splits;
+    }
+
+    // Toon resultaat
+    function showResult(splits, idx) {
+      const s = splits[idx];
+      let extra = "";
+      if (idx === 0) {
+        extra = ` <span class="text-sm text-gray-500">(meest eerlijk)</span>`;
+      } else {
+        const perc = ((s.diff - baselineDiff) / baselineDiff) * 100;
+        extra = ` <span class="text-sm text-gray-500">(±${perc.toFixed(1)}% minder eerlijk)</span>`;
+      }
+
+      // random keuzes voor hesjes en bal
+      const hesjesTeam = Math.random() < 0.5 ? "A" : "B";
+      const balTeam = Math.random() < 0.5 ? "A" : "B";
+
+      // bereken wie sterker is
+      const stronger = s.avgA > s.avgB ? "Team A" : "Team B";
+      const strongerValue = Math.abs(s.avgA - s.avgB).toFixed(2);
+
+      resultDiv.innerHTML = `
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-xl font-bold mb-4">Teams${extra}</h2>
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold mb-2">Team A (gem: ${s.avgA.toFixed(2)})</h3>
+              <ul class="list-disc list-inside">${s.teamA
+                .map((p) => `<li>${p.name}</li>`)
+                .join("")}</ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-2">Team B (gem: ${s.avgB.toFixed(2)})</h3>
+              <ul class="list-disc list-inside">${s.teamB
+                .map((p) => `<li>${p.name}</li>`)
+                .join("")}</ul>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-2">
+            <p class="font-medium">${stronger} is ${strongerValue} punten sterker dan het andere team.</p>
+            <p class="font-medium">Team ${hesjesTeam} draagt hesjes</p>
+            <p class="font-medium">Team ${balTeam} krijgt de bal uit</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // ---- Helpers ----
+    function isValidTeamSplit(sizeA, sizeB, n) {
+      if (n === 6) return sizeA === 3 && sizeB === 3;
+      if (n === 7) return (sizeA === 4 && sizeB === 3) || (sizeA === 3 && sizeB === 4);
+      if (n === 8) return sizeA === 4 && sizeB === 4;
+      if (n === 9) return (sizeA === 5 && sizeB === 4) || (sizeA === 4 && sizeB === 5);
+      if (n === 10) return sizeA === 5 && sizeB === 5;
+      if (n === 11) return (sizeA === 5 && sizeB === 6) || (sizeA === 6 && sizeB === 5);
+      return false;
+    }
+
+    function calcWeightedAvg(team) {
+      const n = team.length;
+      if (n === 3 || n === 4) {
+        return team.reduce((s, p) => s + p.rank, 0) / n;
+      }
+      if (n === 5) {
+        let total = 0;
+        for (let i = 0; i < n; i++) {
+          const subset = team.filter((_, j) => j !== i);
+          total += subset.reduce((s, p) => s + p.rank, 0) / 4;
+        }
+        return total / 5;
+      }
+      if (n === 6) {
+        let total = 0, count = 0;
+        const comb = (arr, k, start = 0, prev = []) => {
+          if (prev.length === k) {
+            total += prev.reduce((s, p) => s + p.rank, 0) / 4;
+            count++;
+            return;
+          }
+          for (let i = start; i < arr.length; i++) {
+            comb(arr, k, i + 1, prev.concat(arr[i]));
+          }
+        };
+        comb(team, 4);
+        return total / count;
+      }
+      return 0;
+    }
+  </script>
 </body>
 </html>
