@@ -29,20 +29,31 @@
   <div id="result" class="mt-8 w-full max-w-2xl"></div>
 
   <script>
-    // Spelerslijst
-    const players = [
-      { name: "Arhan", rank: 6.25 },
-      { name: "David", rank: 7.6 },
-      { name: "Henoch", rank: 7.8 },
-      { name: "Jan", rank: 8.4 },
-      { name: "John", rank: 6.8 },
-      { name: "Just", rank: 7.4 },
-      { name: "Mathew", rank: 6.1 },
-      { name: "Mesach", rank: 6.6 },
-      { name: "Stephan", rank: 8.9 },
-      { name: "Tom B", rank: 7.9 },
-      { name: "Tom P", rank: 6.8 }
+    // ---- Base64-gecodeerde spelers en rankings ----
+    const encodedPlayers = [
+      { name: "Arhan", rank: "Ni4yNQ==" },   
+      { name: "David", rank: "Ny42" },       
+      { name: "Henoch", rank: "Ny44" },      
+      { name: "Jan", rank: "OC40" },         
+      { name: "John", rank: "Ni44" },        
+      { name: "Just", rank: "Ny40" },        
+      { name: "Mathew", rank: "Ni4x" },      
+      { name: "Mesach", rank: "Ni42" },      
+      { name: "Stephan", rank: "OC45" },     
+      { name: "Tom B", rank: "Ny45" },       
+      { name: "Tom P", rank: "Ni44" }        
     ];
+
+    // decodeer ranking
+    function decodeRank(encoded) {
+      return parseFloat(atob(encoded));
+    }
+
+    // decodeer alle spelers
+    const players = encodedPlayers.map(p => ({
+      name: p.name,
+      rank: decodeRank(p.rank)
+    }));
 
     const container = document.getElementById("players");
     const generateBtn = document.getElementById("generate");
@@ -79,11 +90,10 @@
         return;
       }
 
-      // Als dit de eerste keer is → bereken alle mogelijke splits
       if (allSplits.length === 0) {
         allSplits = generateAllSplits(selected);
         currentIndex = 0;
-        baselineDiff = allSplits[0].diff; // eerste is altijd baseline (meest eerlijk)
+        baselineDiff = allSplits[0].diff;
       } else {
         currentIndex++;
         if (currentIndex >= allSplits.length) {
@@ -109,7 +119,7 @@
     function generateAllSplits(selected) {
       const n = selected.length;
       const splits = [];
-      const seen = new Set(); // om duplicaten te voorkomen
+      const seen = new Set();
       const total = 1 << n;
 
       for (let mask = 1; mask < total - 1; mask++) {
@@ -121,7 +131,6 @@
 
         if (!isValidTeamSplit(teamA.length, teamB.length, n)) continue;
 
-        // normaliseer teams
         const namesA = teamA.map(p => p.name).sort().join(",");
         const namesB = teamB.map(p => p.name).sort().join(",");
         const key1 = namesA + "|" + namesB;
@@ -152,11 +161,9 @@
         extra = ` <span class="text-sm text-gray-500">(±${perc.toFixed(1)}% minder eerlijk)</span>`;
       }
 
-      // random keuzes voor hesjes en bal
       const hesjesTeam = Math.random() < 0.5 ? "A" : "B";
       const balTeam = Math.random() < 0.5 ? "A" : "B";
 
-      // bereken wie sterker is
       const stronger = s.avgA > s.avgB ? "Team A" : "Team B";
       const strongerValue = Math.abs(s.avgA - s.avgB).toFixed(2);
 
@@ -166,15 +173,11 @@
           <div class="grid grid-cols-2 gap-6">
             <div>
               <h3 class="font-semibold mb-2">Team A (gem: ${s.avgA.toFixed(2)})</h3>
-              <ul class="list-disc list-inside">${s.teamA
-                .map((p) => `<li>${p.name}</li>`)
-                .join("")}</ul>
+              <ul class="list-disc list-inside">${s.teamA.map(p => `<li>${p.name}</li>`).join("")}</ul>
             </div>
             <div>
               <h3 class="font-semibold mb-2">Team B (gem: ${s.avgB.toFixed(2)})</h3>
-              <ul class="list-disc list-inside">${s.teamB
-                .map((p) => `<li>${p.name}</li>`)
-                .join("")}</ul>
+              <ul class="list-disc list-inside">${s.teamB.map(p => `<li>${p.name}</li>`).join("")}</ul>
             </div>
           </div>
 
