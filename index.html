@@ -31,25 +31,23 @@
   <script>
     // ---- Base64-gecodeerde spelers en rankings ----
     const encodedPlayers = [
-      { name: "Arhan", rank: "Ni4yNQ==" },   
-      { name: "David", rank: "Ny42" },       
-      { name: "Henoch", rank: "Ny44" },      
-      { name: "Jan", rank: "OC40" },         
-      { name: "John", rank: "Ni44" },        
-      { name: "Just", rank: "Ny40" },        
-      { name: "Mathew", rank: "Ni4x" },      
-      { name: "Mesach", rank: "Ni42" },      
-      { name: "Stephan", rank: "OC45" },     
-      { name: "Tom B", rank: "Ny45" },       
-      { name: "Tom P", rank: "Ni44" }        
+      { name: "Arhan", rank: "Ni4yNQ==" },   // 6.25
+      { name: "David", rank: "Ny42" },       // 7.6
+      { name: "Henoch", rank: "Ny44" },      // 7.4
+      { name: "Jan", rank: "OC40" },         // 8.4
+      { name: "John", rank: "Ni44" },        // 6.8
+      { name: "Just", rank: "Ny40" },        // 7.4
+      { name: "Mathew", rank: "Ni4x" },      // 6.1
+      { name: "Mesach", rank: "Ni42" },      // 6.6
+      { name: "Stephan", rank: "OC45" },     // 8.9
+      { name: "Tom B", rank: "Ny45" },       // 7.9
+      { name: "Tom P", rank: "Ni44" }        // 6.8
     ];
 
-    // decodeer ranking
     function decodeRank(encoded) {
       return parseFloat(atob(encoded));
     }
 
-    // decodeer alle spelers
     const players = encodedPlayers.map(p => ({
       name: p.name,
       rank: decodeRank(p.rank)
@@ -65,19 +63,22 @@
       const btn = document.createElement("button");
       btn.textContent = p.name;
       btn.className =
-        "px-4 py-2 rounded-lg border border-gray-400 bg-white hover:bg-gray-200";
-      btn.onclick = () => {
-        btn.classList.toggle("bg-green-400");
-        btn.classList.toggle("text-white");
-        p.selected = !p.selected;
-      };
+        "px-4 py-2 rounded-lg border border-gray-400 bg-white hover:bg-gray-200 transition";
       p.selected = false;
+
+      // ✅ Fix: gebruik pointerdown zodat mobiel direct reageert
+      btn.addEventListener("pointerdown", () => {
+        p.selected = !p.selected;
+        btn.classList.toggle("bg-green-500", p.selected);
+        btn.classList.toggle("text-white", p.selected);
+      });
+
       container.appendChild(btn);
     });
 
     let allSplits = [];
     let currentIndex = -1;
-    let baselineDiff = null; // baseline opslaan
+    let baselineDiff = null;
 
     generateBtn.onclick = () => {
       const selected = players.filter((p) => p.selected);
@@ -103,19 +104,19 @@
         }
       }
 
-      showResult(allSplits, currentIndex);
+      showResult(allSplits, currentIndex, selected.length);
       if (currentIndex > 0) backBtn.classList.remove("hidden");
     };
 
     backBtn.onclick = () => {
       if (currentIndex > 0) {
         currentIndex--;
-        showResult(allSplits, currentIndex);
+        const selected = players.filter(p => p.selected);
+        showResult(allSplits, currentIndex, selected.length);
         if (currentIndex === 0) backBtn.classList.add("hidden");
       }
     };
 
-    // ---- Berekening splits ----
     function generateAllSplits(selected) {
       const n = selected.length;
       const splits = [];
@@ -150,8 +151,7 @@
       return splits;
     }
 
-    // Toon resultaat
-    function showResult(splits, idx) {
+    function showResult(splits, idx, deelnemers) {
       const s = splits[idx];
       let extra = "";
       if (idx === 0) {
@@ -163,9 +163,11 @@
 
       const hesjesTeam = Math.random() < 0.5 ? "A" : "B";
       const balTeam = Math.random() < 0.5 ? "A" : "B";
-
       const stronger = s.avgA > s.avgB ? "Team A" : "Team B";
       const strongerValue = Math.abs(s.avgA - s.avgB).toFixed(2);
+
+      // ✅ Nieuw: tikkie-bedrag berekenen
+      const bedrag = Math.ceil((40 / deelnemers) * 100) / 100;
 
       resultDiv.innerHTML = `
         <div class="bg-white p-6 rounded-lg shadow">
@@ -185,6 +187,11 @@
             <p class="font-medium">${stronger} is ${strongerValue} punten sterker dan het andere team.</p>
             <p class="font-medium">Team ${hesjesTeam} draagt hesjes</p>
             <p class="font-medium">Team ${balTeam} krijgt de bal uit</p>
+          </div>
+
+          <!-- ✅ Nieuw: Tikkie-zonnetje -->
+          <div class="mt-8 bg-yellow-100 border border-yellow-300 rounded-lg p-4 text-yellow-800 font-semibold text-center text-lg">
+            🤑 De tikkie van vanavond bedraagt €${bedrag.toFixed(2)}
           </div>
         </div>
       `;
@@ -232,5 +239,16 @@
       return 0;
     }
   </script>
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-sm text-gray-500">
+    © All rights reserved but not allemaal. 
+    <a 
+      href="https://wa.me/31636068477?text=Hoi,%20geniale%20zaalvoetbalteamgenerator-bedenker." 
+      target="_blank" 
+      class="text-green-600 hover:underline"
+    >
+      App Henoch
+    </a>
+  </footer>
 </body>
 </html>
