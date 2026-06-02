@@ -332,16 +332,23 @@
     let allSplits = [];
     let currentIndex = -1;
     let baselineDiff = null;
+    let lastSelectionKey = "";
+
+    function selectionKey() {
+      return players.filter(p => p.selected).map(p => p.name).sort().join(",");
+    }
 
     generateBtn.onclick = () => {
       const selected = players.filter(p => p.selected);
       if (selected.length < 6) { alert("Minimaal 6 spelers selecteren!"); return; }
       if (selected.length > 11) { alert("Maximaal 11 spelers!"); return; }
 
-      if (allSplits.length === 0) {
+      const key = selectionKey();
+      if (allSplits.length === 0 || key !== lastSelectionKey) {
         allSplits = generateAllSplits(selected);
         currentIndex = 0;
         baselineDiff = allSplits[0].diff;
+        lastSelectionKey = key;
       } else {
         currentIndex++;
         if (currentIndex >= allSplits.length) {
