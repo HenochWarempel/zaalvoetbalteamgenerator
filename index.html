@@ -240,9 +240,6 @@
       border-radius: 20px;
     }
     .alarm-btn {
-      position: fixed;
-      top: 16px;
-      right: 16px;
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -300,8 +297,11 @@
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
 
-  <!-- Wekker knop -->
-  <div id="alarmBtn" class="alarm-btn" title="Wekker 21:30">⏰</div>
+  <!-- Wekker knop + muziek knop -->
+  <div style="position:fixed;top:16px;right:16px;display:flex;gap:8px;z-index:50;">
+    <div id="musicBtn" class="alarm-btn" title="Muziek aan/uit">⚽</div>
+    <div id="alarmBtn" class="alarm-btn" title="Wekker 21:30">⏰</div>
+  </div>
 
   <!-- Alarm popup -->
   <div id="alarmOverlay" class="alarm-overlay">
@@ -599,6 +599,25 @@
       }
       return 0;
     }
+    // ---- Muziek ----
+    const musicBtn = document.getElementById("musicBtn");
+    const music = new Audio("https://cs1.mp3.pm/download/5021949/Z1VlOTBMTTNXYm1wdVg0UHlvZlJaeWhVanFkV0NhcFRpWFQwaUkxZU5MWWNnVXNDakRKOHdOYXhoQ3BabzBpbVVaV0NtNWFBWldGUkJhSXcyU3hWR3BRRFFpcWpvVGxiRVF6c2tlOE95bTc2dHB4Z2RoVXpFY1E5ZDZNQkVsbmU/Opus_-_Live_Is_Life_(mp3.pm).mp3");
+    music.loop = true;
+    let musicPlaying = false;
+
+    musicBtn.addEventListener("click", () => {
+      if (musicPlaying) {
+        music.pause();
+        music.currentTime = 0;
+        musicPlaying = false;
+        musicBtn.classList.remove("active");
+      } else {
+        music.play();
+        musicPlaying = true;
+        musicBtn.classList.add("active");
+      }
+    });
+
     // ---- Wekker ----
     const alarmBtn     = document.getElementById("alarmBtn");
     const alarmOverlay = document.getElementById("alarmOverlay");
