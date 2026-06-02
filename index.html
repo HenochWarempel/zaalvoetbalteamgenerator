@@ -86,6 +86,7 @@
       font-size: 15px;
       box-shadow: 0 4px 15px #2563eb55;
       transition: transform 0.1s, box-shadow 0.1s;
+      width: 100%;
     }
     .btn-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px #2563eb44; }
 
@@ -99,13 +100,15 @@
       cursor: pointer;
       font-size: 15px;
       transition: background 0.15s, color 0.15s;
+      width: 100%;
     }
     .btn-secondary:active { background: #0f172a; }
 
     .team-card {
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px;
       flex: 1;
+      min-width: 0;
     }
     .team-a { background: linear-gradient(160deg, #1e3a8a22, #1e40af33); border: 2px solid #3b82f6; }
     .team-b { background: linear-gradient(160deg, #7c2d1222, #c2410c33); border: 2px solid #f97316; }
@@ -154,7 +157,7 @@
     }
     .pill-a .player-pill-avatar { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .pill-b .player-pill-avatar { background: linear-gradient(135deg, #f97316, #ea580c); }
-    .player-pill span { color: #e2e8f0; font-weight: 600; font-size: 14px; }
+    .player-pill span { color: #e2e8f0; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .strength-bar-container {
       background: #0f172a;
@@ -206,8 +209,12 @@
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 20px;
-      padding: 28px;
+      padding: 20px;
       animation: slideUp 0.3s ease;
+    }
+
+    @media (min-width: 480px) {
+      .result-card { padding: 28px; }
     }
 
     @keyframes slideUp {
@@ -251,7 +258,7 @@
   <div id="players" class="grid grid-cols-3 gap-3 w-full max-w-lg mb-6"></div>
 
   <!-- Knoppen -->
-  <div class="flex gap-3">
+  <div class="flex gap-3 w-full max-w-lg">
     <button id="back" class="btn-secondary hidden">← Vorige</button>
     <button id="generate" class="btn-primary">Genereer teams →</button>
   </div>
@@ -425,7 +432,7 @@
           </div>
 
           <!-- Teams -->
-          <div class="flex gap-4 mb-6">
+          <div class="flex flex-col sm:flex-row gap-4 mb-6">
             <div class="team-card team-a">
               <div class="team-label-a">Team A</div>
               <div class="text-slate-400 text-xs mb-3 font-semibold">gem. ${s.avgA.toFixed(2)}</div>
@@ -478,10 +485,6 @@
             <div class="text-2xl mb-1">🤑</div>
             <div class="text-amber-200 text-sm font-semibold mb-1">Tikkie van vanavond</div>
             <div class="text-white text-3xl font-extrabold">€${bedrag.toFixed(2)}</div>
-            <a href="https://tikkie.me" target="_blank"
-               class="inline-block mt-3 bg-amber-500 hover:bg-amber-400 text-white text-sm font-bold px-5 py-2 rounded-full transition">
-              Stuur Tikkie →
-            </a>
           </div>
 
         </div>
