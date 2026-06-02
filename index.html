@@ -239,9 +239,78 @@
       padding: 3px 10px;
       border-radius: 20px;
     }
+    .alarm-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 50;
+      user-select: none;
+    }
+    .alarm-btn.active {
+      background: #052e16;
+      border-color: #22c55e;
+      box-shadow: 0 0 8px #22c55e55;
+    }
+    .alarm-btn.ringing {
+      animation: ring 0.4s ease infinite;
+    }
+    @keyframes ring {
+      0%   { transform: rotate(-15deg); }
+      50%  { transform: rotate(15deg); }
+      100% { transform: rotate(-15deg); }
+    }
+
+    .alarm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000000cc;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .alarm-overlay.show { display: flex; }
+    .alarm-popup {
+      background: linear-gradient(135deg, #7f1d1d, #991b1b);
+      border: 3px solid #ef4444;
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      cursor: pointer;
+      animation: popIn 0.3s ease;
+      box-shadow: 0 0 60px #ef444488;
+      max-width: 90vw;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
+
+  <!-- Wekker knop -->
+  <div id="alarmBtn" class="alarm-btn" title="Wekker 21:30">⏰</div>
+
+  <!-- Alarm popup -->
+  <div id="alarmOverlay" class="alarm-overlay">
+    <div class="alarm-popup" id="alarmPopup">
+      <div style="font-size:64px;margin-bottom:16px;">🚨</div>
+      <div style="color:white;font-size:48px;font-weight:900;letter-spacing:-1px;">HET IS TIJD!</div>
+      <div style="color:#fca5a5;font-size:14px;margin-top:16px;font-weight:600;">Tik om te sluiten</div>
+    </div>
+  </div>
 
   <!-- Header -->
   <div class="w-full max-w-lg mb-8 text-center">
@@ -530,6 +599,78 @@
       }
       return 0;
     }
+    // ---- Wekker ----
+    const alarmBtn     = document.getElementById("alarmBtn");
+    const alarmOverlay = document.getElementById("alarmOverlay");
+    let alarmActive = false;
+    let alarmFired  = false;
+    let sirenNodes  = [];
+    let alarmInterval = null;
+
+    alarmBtn.addEventListener("click", () => {
+      alarmActive = !alarmActive;
+      alarmFired = false;
+      alarmBtn.classList.toggle("active", alarmActive);
+      alarmBtn.title = alarmActive ? "Wekker aan (21:30)" : "Wekker uit";
+    });
+
+    alarmOverlay.addEventListener("click", stopAlarm);
+
+    function amsterdamHHMM() {
+      const parts = new Intl.DateTimeFormat("nl-NL", {
+        timeZone: "Europe/Amsterdam",
+        hour: "2-digit", minute: "2-digit", hour12: false
+      }).formatToParts(new Date());
+      const h = parts.find(p => p.type === "hour").value;
+      const m = parts.find(p => p.type === "minute").value;
+      return `${h}:${m}`;
+    }
+
+    function playSiren() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      sirenNodes = [];
+
+      function beep(startTime) {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(600, startTime);
+        osc.frequency.linearRampToValueAtTime(1200, startTime + 0.5);
+        osc.frequency.linearRampToValueAtTime(600, startTime + 1.0);
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.setValueAtTime(0.3, startTime + 0.9);
+        gain.gain.linearRampToValueAtTime(0, startTime + 1.0);
+        osc.start(startTime);
+        osc.stop(startTime + 1.0);
+        sirenNodes.push({ osc, gain, ctx });
+      }
+
+      for (let i = 0; i < 20; i++) beep(ctx.currentTime + i * 1.1);
+      sirenNodes._ctx = ctx;
+    }
+
+    function stopAlarm() {
+      alarmOverlay.classList.remove("show");
+      alarmBtn.classList.remove("ringing");
+      alarmActive = false;
+      alarmBtn.classList.remove("active");
+      if (sirenNodes._ctx) {
+        try { sirenNodes._ctx.close(); } catch(e) {}
+      }
+      sirenNodes = [];
+    }
+
+    setInterval(() => {
+      if (!alarmActive || alarmFired) return;
+      if (amsterdamHHMM() === "21:30") {
+        alarmFired = true;
+        alarmBtn.classList.add("ringing");
+        alarmOverlay.classList.add("show");
+        playSiren();
+      }
+    }, 10000);
   </script>
 
   <footer class="mt-12 text-center text-sm text-slate-500">
