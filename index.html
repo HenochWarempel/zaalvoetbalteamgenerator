@@ -123,10 +123,11 @@
   .btn.text { background: none; color: var(--accent); padding: 10px; }
   .hint { text-align: center; font-size: 12.5px; color: var(--text-faint); margin-top: 10px; }
   .status-msg {
-    text-align: center; font-size: 13px; font-weight: 600; color: var(--danger);
+    text-align: center; font-size: 13px; font-weight: 600; color: var(--text-dim);
     margin-top: 10px; opacity: 0; transition: opacity .2s; height: 0; overflow: hidden;
   }
   .status-msg.show { opacity: 1; height: auto; padding: 2px 0; }
+  .status-msg.error { color: var(--danger); }
 
   /* ---------- results: logistics banner ---------- */
   .logistics { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -206,6 +207,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     </button>
   </header>
+  <p class="status-msg" id="statusMsg"></p>
 
   <!-- ===================== SELECTIE ===================== -->
   <main id="view-select">
@@ -220,7 +222,6 @@
       <button class="btn primary" id="genBtn" disabled>Genereer teams</button>
     </div>
     <p class="hint">Kies 6 t/m 11 spelers</p>
-    <p class="status-msg" id="statusMsg"></p>
   </main>
 
   <!-- ===================== RESULTAAT ===================== -->
@@ -419,13 +420,14 @@
     genBtn.disabled = !(n >= 6 && n <= 11);
   }
 
-  function flashMsg(el, msg) {
+  function flashMsg(el, msg, isError) {
     el._t && clearTimeout(el._t);
     el.textContent = msg;
+    el.classList.toggle("error", !!isError);
     el.classList.add("show");
     el._t = setTimeout(() => el.classList.remove("show"), 2200);
   }
-  const showStatus = (msg) => flashMsg(statusMsg, msg);
+  const showStatus = (msg, isError) => flashMsg(statusMsg, msg, isError);
 
   /* ============================================================
      RESULTAAT-SCHERM
@@ -480,9 +482,9 @@
 
   function onGenerate() {
     const sel = players.filter((p) => p.selected);
-    if (sel.length < 6 || sel.length > 11) { showStatus("Kies tussen de 6 en 11 spelers."); return; }
+    if (sel.length < 6 || sel.length > 11) { showStatus("Kies tussen de 6 en 11 spelers.", true); return; }
     allSplits = generateAllSplits(sel);
-    if (allSplits.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal."); return; }
+    if (allSplits.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal.", true); return; }
     baselineDiff = allSplits[0].diff;
     currentIndex = 0;
     deelnemers = sel.length;
@@ -562,7 +564,7 @@
     alarmActive = !alarmActive; alarmFired = false;
     alarmBtn.classList.toggle("active", alarmActive);
     ensureAudio();
-    showStatus(alarmActive ? "Wekker aan · 21:30" : "Wekker uit");
+    showStatus(alarmActive ? "Wekker om 21:30 is gezet" : "Wekker is uitgezet");
   });
   function closeAlarm() {
     overlay.classList.remove("show");
