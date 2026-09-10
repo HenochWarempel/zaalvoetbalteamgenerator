@@ -152,32 +152,13 @@
   }
   .tikkie-edit input:focus { outline: none; }
 
-  /* ---------- combo list ---------- */
-  #comboList { display: flex; flex-direction: column; gap: 8px; }
-  details.combo { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); overflow: hidden; }
-  details.combo[open] { border-color: var(--accent); }
-  details.combo summary {
-    list-style: none; cursor: pointer; padding: 12px 14px; display: flex; align-items: center; gap: 10px;
-  }
-  details.combo summary::-webkit-details-marker { display: none; }
-  .combo-rank {
-    width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); color: var(--text-dim);
-    font-size: 12px; font-weight: 700; flex: none; display: flex; align-items: center; justify-content: center;
-  }
-  details.combo:first-of-type .combo-rank { background: var(--accent); color: var(--accent-ink); }
-  .combo-mid { flex: 1; min-width: 0; }
-  .combo-fair { font-size: 13px; font-weight: 700; }
-  .combo-sub { font-size: 12px; color: var(--text-faint); margin-top: 1px; }
-  .combo-chevron { flex: none; color: var(--text-faint); transition: transform .15s; }
-  .combo-chevron svg { width: 16px; height: 16px; }
-  details.combo[open] .combo-chevron { transform: rotate(180deg); }
+  /* ---------- result: fairness line + team panel ---------- */
+  .fair-line { font-size: 15px; font-weight: 700; margin: 2px 2px 16px; }
+  .fair-line.best { color: var(--accent); }
+  .fair-line:not(.best) { color: var(--text-dim); }
 
-  .mini-bar { height: 6px; border-radius: 4px; overflow: hidden; display: flex; background: var(--surface-2); margin-top: 6px; }
-  .mini-bar .a { background: var(--teamA); }
-  .mini-bar .b { background: var(--teamB); }
-
-  .combo-body { padding: 4px 14px 16px; border-top: 1px solid var(--border); }
-  .teamgrid { display: flex; gap: 10px; margin-top: 12px; }
+  .team-card { padding: 14px; }
+  .teamgrid { display: flex; gap: 10px; }
   .teamcol { flex: 1; min-width: 0; }
   .teamcol-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .teamcol-hd .name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
@@ -244,9 +225,10 @@
   <!-- ===================== RESULTAAT ===================== -->
   <main id="view-result" hidden>
     <div class="section-title">
-      <h2>Alle mogelijke teamindelingen</h2>
-      <span class="pill" id="comboCount"></span>
+      <h2>Teamindeling</h2>
+      <span class="pill" id="comboPos"></span>
     </div>
+    <p class="fair-line" id="fairLine"></p>
 
     <div class="logistics">
       <div class="logistics-row">
@@ -259,6 +241,27 @@
           <div><div class="lbl">Trapt af</div><div class="val" id="aftrapVal">—</div></div>
         </div>
       </div>
+    </div>
+
+    <div class="card team-card">
+      <div class="teamgrid">
+        <div class="teamcol">
+          <div class="teamcol-hd A"><span class="name">Team A</span></div>
+          <div id="teamAList"></div>
+        </div>
+        <div class="teamcol">
+          <div class="teamcol-hd B"><span class="name">Team B</span></div>
+          <div id="teamBList"></div>
+        </div>
+      </div>
+      <div class="balance-full">
+        <div class="row"><span class="a">◀ Team A</span><span class="b">Team B ▶</span></div>
+        <div class="bar"><div id="balBarA" style="background:var(--teamA)"></div><div id="balBarB" style="background:var(--teamB)"></div></div>
+        <div class="tag" id="balTag"></div>
+      </div>
+    </div>
+
+    <div class="logistics" style="margin-top:14px">
       <div class="card tikkie-card">
         <div class="tikkie-info">
           <div class="lbl">Tikkie · ieder betaalt</div>
@@ -271,8 +274,8 @@
       </div>
     </div>
 
-    <div id="comboList"></div>
-
+    <button class="btn primary" id="nextBtn" style="width:100%;margin-top:16px">Nieuwe verdeling</button>
+    <p class="status-msg" id="resultStatusMsg"></p>
     <button class="btn ghost back-btn" id="backBtn" style="width:100%">↩ Nieuwe selectie</button>
   </main>
 
@@ -415,18 +418,19 @@
     genBtn.disabled = !(n >= 6 && n <= 11);
   }
 
-  let statusT = null;
-  function showStatus(msg) {
-    statusMsg.textContent = msg;
-    statusMsg.classList.add("show");
-    clearTimeout(statusT);
-    statusT = setTimeout(() => statusMsg.classList.remove("show"), 2200);
+  function flashMsg(el, msg) {
+    el._t && clearTimeout(el._t);
+    el.textContent = msg;
+    el.classList.add("show");
+    el._t = setTimeout(() => el.classList.remove("show"), 2200);
   }
+  const showStatus = (msg) => flashMsg(statusMsg, msg);
+  const showResultStatus = (msg) => flashMsg($("#resultStatusMsg"), msg);
 
   /* ============================================================
      RESULTAAT-SCHERM
      ============================================================ */
-  let allSplits = [], baselineDiff = 0, tikkieTotal = 40, deelnemers = 0;
+  let allSplits = [], currentIndex = 0, baselineDiff = 0, tikkieTotal = 40, deelnemers = 0;
 
   function teamPlayersHTML(team) {
     return team.slice().sort((a, b) => a.name.localeCompare(b.name)).map((p) => `
@@ -436,47 +440,25 @@
       </div>`).join("");
   }
 
-  function comboHTML(s, idx) {
+  function renderResult() {
+    const s = allSplits[currentIndex];
     const totalAvg = s.avgA + s.avgB;
     const wA = ((s.avgA / totalAvg) * 100).toFixed(1);
     const wB = (100 - wA).toFixed(1);
-    const fairLabel = idx === 0
+    const isBest = currentIndex === 0;
+    const fairLabel = isBest
       ? "Meest eerlijke indeling"
       : `+${(((s.diff - baselineDiff) / (baselineDiff || 1)) * 100).toFixed(0)}% minder eerlijk dan #1`;
-    return `
-      <details class="combo">
-        <summary>
-          <div class="combo-rank">${idx + 1}</div>
-          <div class="combo-mid">
-            <div class="combo-fair">${fairLabel}</div>
-            <div class="combo-sub">Team A (${s.teamA.length}) vs Team B (${s.teamB.length}) · ${balanceTag(s.diff)}</div>
-            <div class="mini-bar"><div class="a" style="width:${wA}%"></div><div class="b" style="width:${wB}%"></div></div>
-          </div>
-          <div class="combo-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-        </summary>
-        <div class="combo-body">
-          <div class="teamgrid">
-            <div class="teamcol">
-              <div class="teamcol-hd A"><span class="name">Team A</span></div>
-              ${teamPlayersHTML(s.teamA)}
-            </div>
-            <div class="teamcol">
-              <div class="teamcol-hd B"><span class="name">Team B</span></div>
-              ${teamPlayersHTML(s.teamB)}
-            </div>
-          </div>
-          <div class="balance-full">
-            <div class="row"><span class="a">◀ Team A</span><span class="b">Team B ▶</span></div>
-            <div class="bar"><div class="a" style="width:${wA}%;background:var(--teamA)"></div><div class="b" style="width:${wB}%;background:var(--teamB)"></div></div>
-            <div class="tag">${balanceTag(s.diff)}</div>
-          </div>
-        </div>
-      </details>`;
-  }
 
-  function renderCombos() {
-    $("#comboCount").textContent = `${allSplits.length} combinatie${allSplits.length === 1 ? "" : "s"}`;
-    $("#comboList").innerHTML = allSplits.map(comboHTML).join("");
+    $("#comboPos").textContent = `${currentIndex + 1} / ${allSplits.length}`;
+    const fairLine = $("#fairLine");
+    fairLine.textContent = fairLabel;
+    fairLine.classList.toggle("best", isBest);
+    $("#teamAList").innerHTML = teamPlayersHTML(s.teamA);
+    $("#teamBList").innerHTML = teamPlayersHTML(s.teamB);
+    $("#balBarA").style.width = wA + "%";
+    $("#balBarB").style.width = wB + "%";
+    $("#balTag").textContent = balanceTag(s.diff);
   }
 
   function renderLogistics() {
@@ -499,10 +481,11 @@
     allSplits = generateAllSplits(sel);
     if (allSplits.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal."); return; }
     baselineDiff = allSplits[0].diff;
+    currentIndex = 0;
     deelnemers = sel.length;
-    coinFlips();
     renderLogistics();
-    renderCombos();
+    coinFlips();
+    renderResult();
     viewSelect.hidden = true;
     viewResult.hidden = false;
     window.scrollTo(0, 0);
@@ -513,6 +496,13 @@
     players.forEach((p) => (p.selected = false));
     roster.querySelectorAll(".prow").forEach((r) => r.classList.remove("sel"));
     updateCounter();
+  });
+  $("#nextBtn").addEventListener("click", () => {
+    if (currentIndex + 1 >= allSplits.length) { showResultStatus("Geen nieuwe combinaties meer — dit was de minst eerlijke optie."); return; }
+    currentIndex++;
+    coinFlips();
+    renderResult();
+    window.scrollTo(0, 0);
   });
   $("#backBtn").addEventListener("click", () => {
     viewResult.hidden = true;
