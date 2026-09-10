@@ -116,9 +116,10 @@
     font-family: inherit; cursor: pointer; transition: filter .15s, transform .05s;
   }
   .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
   .btn.primary { background: var(--accent); color: var(--accent-ink); }
-  .btn.primary:disabled { opacity: .4; cursor: not-allowed; }
   .btn.ghost { background: var(--surface-2); color: var(--text); flex: .5; }
+  .btn.soft-orange { background: var(--teamB-soft); color: var(--teamB); }
   .btn.text { background: none; color: var(--accent); padding: 10px; }
   .hint { text-align: center; font-size: 12.5px; color: var(--text-faint); margin-top: 10px; }
   .status-msg {
@@ -274,8 +275,8 @@
       </div>
     </div>
 
-    <button class="btn primary" id="nextBtn" style="width:100%;margin-top:16px">Nieuwe verdeling</button>
-    <p class="status-msg" id="resultStatusMsg"></p>
+    <button class="btn primary" id="nextBtn" style="width:100%;margin-top:16px">Volgende verdeling</button>
+    <button class="btn soft-orange" id="prevBtn" style="width:100%;margin-top:10px">Vorige verdeling</button>
     <button class="btn ghost back-btn" id="backBtn" style="width:100%">↩ Nieuwe selectie</button>
   </main>
 
@@ -425,7 +426,6 @@
     el._t = setTimeout(() => el.classList.remove("show"), 2200);
   }
   const showStatus = (msg) => flashMsg(statusMsg, msg);
-  const showResultStatus = (msg) => flashMsg($("#resultStatusMsg"), msg);
 
   /* ============================================================
      RESULTAAT-SCHERM
@@ -459,6 +459,9 @@
     $("#balBarA").style.width = wA + "%";
     $("#balBarB").style.width = wB + "%";
     $("#balTag").textContent = balanceTag(s.diff);
+
+    $("#prevBtn").disabled = currentIndex === 0;
+    $("#nextBtn").disabled = currentIndex + 1 >= allSplits.length;
   }
 
   function renderLogistics() {
@@ -498,8 +501,15 @@
     updateCounter();
   });
   $("#nextBtn").addEventListener("click", () => {
-    if (currentIndex + 1 >= allSplits.length) { showResultStatus("Geen nieuwe combinaties meer — dit was de minst eerlijke optie."); return; }
+    if (currentIndex + 1 >= allSplits.length) return;
     currentIndex++;
+    coinFlips();
+    renderResult();
+    window.scrollTo(0, 0);
+  });
+  $("#prevBtn").addEventListener("click", () => {
+    if (currentIndex === 0) return;
+    currentIndex--;
     coinFlips();
     renderResult();
     window.scrollTo(0, 0);
