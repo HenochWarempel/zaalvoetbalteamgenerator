@@ -100,11 +100,6 @@
   }
   .pbody { flex: 1; min-width: 0; }
   .pname { font-size: 15px; font-weight: 600; line-height: 1.25; }
-  .prow .meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  .postag {
-    font-size: 10.5px; font-weight: 700; color: var(--text-faint);
-    background: var(--surface-2); border-radius: 6px; padding: 1px 6px; letter-spacing: .03em;
-  }
   .check {
     width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
     flex: none; display: flex; align-items: center; justify-content: center; color: #fff;
@@ -320,8 +315,6 @@
   const players = encodedPlayers.map((p) => ({ name: p.name, rank: decodeRank(p.rank), selected: false }));
 
   function hashStr(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
-  const POS = ["V", "M", "A"];
-  players.forEach((p) => (p.pos = POS[hashStr(p.name) % 3]));
 
   /* ============================================================
      BALANCERINGS-LOGICA — ongewijzigd overgenomen.
@@ -402,7 +395,6 @@
         <div class="avatar" style="${avatarStyle(p.name)}">${initials(p.name)}</div>
         <div class="pbody">
           <div class="pname">${p.name}</div>
-          <div class="meta"><span class="postag">${p.pos}</span></div>
         </div>
         <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       </div>`).join("");
@@ -441,7 +433,6 @@
       <div class="tplayer">
         <div class="avatar" style="${avatarStyle(p.name)}">${initials(p.name)}</div>
         <div class="pname">${p.name}</div>
-        <span class="postag">${p.pos}</span>
       </div>`).join("");
   }
 
