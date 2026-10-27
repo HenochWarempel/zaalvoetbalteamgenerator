@@ -145,6 +145,64 @@
   .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border-radius: 100px; padding: 5px 6px 5px 11px; font-size: 13px; font-weight: 600; }
   .chip button { width: 20px; height: 20px; border: none; border-radius: 50%; background: var(--border); color: var(--text-dim); cursor: pointer; padding: 0; line-height: 1; }
 
+  /* ---------- tabs ---------- */
+  .tabs { display: flex; gap: 4px; padding: 4px; margin-bottom: 18px; background: var(--surface-2); border-radius: 14px; }
+  .tabs button {
+    flex: 1; border: none; background: none; border-radius: 10px; padding: 9px 4px; cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--text-dim);
+  }
+  .tabs button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(20,20,20,.08); }
+
+  /* ---------- wedstrijd / uitslag ---------- */
+  .score-card { padding: 18px 14px; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .score-card label { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .score-card label.A { color: var(--teamA); } .score-card label.B { color: var(--teamB); }
+  .score-card input {
+    width: 84px; text-align: center; font-family: inherit; font-size: 34px; font-weight: 800; color: var(--text);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 10px 0;
+  }
+  .score-card input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .score-card .colon { font-size: 28px; font-weight: 800; color: var(--text-faint); padding-top: 20px; }
+  .play-meta { display: flex; gap: 10px; margin-top: 12px; }
+
+  /* ---------- stand / statistieken ---------- */
+  .empty { text-align: center; color: var(--text-dim); font-size: 14px; padding: 36px 16px; line-height: 1.5; }
+  .stats { padding: 0 12px; }
+  .stats-hd, .stats summary { display: grid; grid-template-columns: 22px 1fr 26px 26px 26px 26px 44px; gap: 4px; align-items: center; }
+  .stats-hd { padding: 10px 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); border-bottom: 1px solid var(--border); }
+  .stats-hd span:nth-child(n+3), .stats summary span:nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+  .stats details { border-bottom: 1px solid var(--border); }
+  .stats details:last-child { border-bottom: none; }
+  .stats summary { list-style: none; cursor: pointer; padding: 11px 0; font-size: 14px; }
+  .stats summary::-webkit-details-marker { display: none; }
+  .stats summary .nm { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stats summary .pos { color: var(--text-faint); font-size: 12px; font-weight: 700; }
+  .stats summary .pc { font-weight: 800; color: var(--accent); }
+  .rel-wrap { display: flex; gap: 14px 16px; padding: 2px 0 14px 26px; flex-wrap: wrap; }
+  .rel-col { flex: 1 1 220px; min-width: 0; }
+  .rel-col h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+  .rel { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 3px 0; }
+  .rel .d { color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .legend { font-size: 12px; color: var(--text-faint); margin: 8px 2px 0; }
+  .tcard { padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+  .tcard .tn { font-size: 14px; font-weight: 600; line-height: 1.4; min-width: 0; }
+  .tcard .tr { text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+  .tcard .tr b { display: block; font-size: 18px; font-weight: 800; color: var(--accent); }
+  .tcard .tr span { font-size: 12px; color: var(--text-dim); }
+  .sub-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin: 20px 2px 8px; }
+  .mrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .mrow:last-child { border-bottom: none; }
+  .mrow .md { flex: none; width: 56px; color: var(--text-faint); font-weight: 600; font-size: 12px; }
+  .mrow .mt { flex: 1; min-width: 0; line-height: 1.4; }
+  .mrow .mt .a { color: var(--teamA); font-weight: 600; } .mrow .mt .b { color: var(--teamB); font-weight: 600; }
+  .mrow .mt b { margin: 0 4px; font-size: 14px; }
+  .mrow button { flex: none; border: none; background: var(--surface-2); color: var(--text-dim); border-radius: 8px; padding: 6px 9px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
+  .mrow button.armed { background: var(--danger); color: #fff; }
+  .backup { margin-top: 16px; }
+  .backup textarea { width: 100%; min-height: 80px; resize: vertical; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 12px; }
+  .backup .btnrow { margin-top: 8px; }
+  .backup .btn { padding: 10px; font-size: 13px; }
+
   /* ---------- buttons ---------- */
   .btnrow { display: flex; gap: 10px; margin-top: 16px; }
   .btn {
@@ -245,6 +303,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     </button>
   </header>
+  <nav class="tabs" id="tabs">
+    <button type="button" class="active" data-tab="indelen">Indelen</button>
+    <button type="button" data-tab="stand">Stand</button>
+    <button type="button" data-tab="teams">Sterkste teams</button>
+  </nav>
   <p class="status-msg" id="statusMsg"></p>
 
   <!-- ===================== SELECTIE ===================== -->
@@ -343,9 +406,72 @@
       </div>
     </div>
 
-    <button class="btn primary" id="nextBtn" style="width:100%;margin-top:16px">Volgende verdeling</button>
+    <button class="btn primary" id="playBtn" style="width:100%;margin-top:16px">⚽ Speel met deze teams</button>
+    <button class="btn ghost" id="nextBtn" style="width:100%;margin-top:10px">Volgende verdeling</button>
     <button class="btn soft-orange" id="prevBtn" style="width:100%;margin-top:10px">Vorige verdeling</button>
     <button class="btn ghost back-btn" id="backBtn" style="width:100%">↩ Nieuwe selectie</button>
+  </main>
+
+  <!-- ===================== WEDSTRIJD ===================== -->
+  <main id="view-play" hidden>
+    <div class="section-title">
+      <h2>Wedstrijd</h2>
+      <span class="pill ready">bezig</span>
+    </div>
+    <div class="card team-card">
+      <div class="teamgrid">
+        <div class="teamcol">
+          <div class="teamcol-hd A"><span class="name">Team A</span></div>
+          <div id="playAList"></div>
+        </div>
+        <div class="teamcol">
+          <div class="teamcol-hd B"><span class="name">Team B</span></div>
+          <div id="playBList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="play-meta">
+      <div class="badge-card A"><span class="ico">🦺</span><div><div class="lbl">Hesjes</div><div class="val" id="playHesjes">—</div></div></div>
+      <div class="badge-card B"><span class="ico">⚽</span><div><div class="lbl">Trapt af</div><div class="val" id="playAftrap">—</div></div></div>
+    </div>
+    <div class="section-title"><h2>Uitslag</h2></div>
+    <div class="card score-card">
+      <label class="A">Team A<input type="number" id="goalsA" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+      <span class="colon">:</span>
+      <label class="B">Team B<input type="number" id="goalsB" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+    </div>
+    <button class="btn primary" id="saveResultBtn" style="width:100%;margin-top:16px">Uitslag opslaan</button>
+    <button class="btn ghost" id="playBackBtn" style="width:100%;margin-top:10px">← Terug naar indeling</button>
+    <button class="btn text" id="playCancelBtn" style="width:100%;margin-top:4px">Wedstrijd annuleren</button>
+  </main>
+
+  <!-- ===================== STAND ===================== -->
+  <main id="view-stand" hidden>
+    <div class="section-title">
+      <h2>Stand per speler</h2>
+      <span class="pill" id="matchCount"></span>
+    </div>
+    <div id="standBody"></div>
+
+    <details class="card opts backup">
+      <summary>Back-up</summary>
+      <div class="opts-body">
+        <p class="legend" style="margin:0">Uitslagen staan alleen in deze browser. Maak een back-up om ze te bewaren of op een ander apparaat te zetten.</p>
+        <textarea id="backupText" placeholder="Back-up verschijnt hier. Plak een back-up hier om te herstellen." spellcheck="false"></textarea>
+        <div class="btnrow">
+          <button type="button" class="btn ghost" id="backupMake" style="flex:1">Back-up maken</button>
+          <button type="button" class="btn ghost" id="backupRestore" style="flex:1">Herstellen</button>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <!-- ===================== STERKSTE TEAMS ===================== -->
+  <main id="view-teams" hidden>
+    <div class="section-title">
+      <h2>Sterkste teams</h2>
+    </div>
+    <div id="teamsBody"></div>
   </main>
 
 </div>
@@ -634,9 +760,7 @@
     renderLogistics();
     coinFlips();
     renderResult();
-    viewSelect.hidden = true;
-    viewResult.hidden = false;
-    window.scrollTo(0, 0);
+    showView("result");
   }
 
   $("#genBtn").addEventListener("click", onGenerate);
@@ -660,14 +784,187 @@
     window.scrollTo(0, 0);
   });
   $("#backBtn").addEventListener("click", () => {
-    viewResult.hidden = true;
-    viewSelect.hidden = false;
-    window.scrollTo(0, 0);
+    showView("select");
   });
   $("#tikkieTotalInput").addEventListener("input", (e) => {
     const v = parseFloat(e.target.value);
     tikkieTotal = isNaN(v) || v < 0 ? 0 : v;
     renderLogistics();
+  });
+
+  /* ============================================================
+     WEDSTRIJDEN, STAND EN TEAMS
+     Uitslagen staan in localStorage (alleen op dit apparaat).
+     ============================================================ */
+  const STORE_KEY = "zv-uitslagen", PENDING_KEY = "zv-lopend";
+  const loadStore = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
+  const saveStore = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const validMatch = (m) => m && Array.isArray(m.teamA) && Array.isArray(m.teamB) && m.teamA.concat(m.teamB).every((n) => typeof n === "string")
+    && Number.isInteger(m.goalsA) && Number.isInteger(m.goalsB) && m.goalsA >= 0 && m.goalsB >= 0;
+  let matches = loadStore(STORE_KEY, []);
+  matches = Array.isArray(matches) ? matches.filter(validMatch) : [];
+  let pending = loadStore(PENDING_KEY, null);
+  if (pending && !(Array.isArray(pending.teamA) && Array.isArray(pending.teamB))) pending = null;
+
+  const MAIN_VIEWS = ["select", "result", "play"];
+  let lastIndelen = "select";
+  function showView(name) {
+    if (MAIN_VIEWS.includes(name)) lastIndelen = name;
+    ["select", "result", "play", "stand", "teams"].forEach((k) => { $("#view-" + k).hidden = k !== name; });
+    const tab = MAIN_VIEWS.includes(name) ? "indelen" : name;
+    document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+    if (name === "stand") renderStand();
+    if (name === "teams") renderTeams();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.tab !== "indelen") return showView(b.dataset.tab);
+    if (lastIndelen === "play" && !pending) lastIndelen = allSplits.length ? "result" : "select";
+    showView(lastIndelen);
+  }));
+
+  /* --- wedstrijd spelen --- */
+  function renderPlay() {
+    const asPlayers = (names) => names.map((name) => ({ name }));
+    $("#playAList").innerHTML = teamPlayersHTML(asPlayers(pending.teamA));
+    $("#playBList").innerHTML = teamPlayersHTML(asPlayers(pending.teamB));
+    $("#playHesjes").textContent = pending.hesjes || "—";
+    $("#playAftrap").textContent = pending.aftrap || "—";
+  }
+  $("#playBtn").addEventListener("click", () => {
+    const s = allSplits[currentIndex];
+    pending = { teamA: s.teamA.map((p) => p.name), teamB: s.teamB.map((p) => p.name), hesjes: $("#hesjesVal").textContent, aftrap: $("#aftrapVal").textContent };
+    saveStore(PENDING_KEY, pending);
+    $("#goalsA").value = ""; $("#goalsB").value = "";
+    renderPlay();
+    showView("play");
+  });
+  $("#playBackBtn").addEventListener("click", () => showView(allSplits.length ? "result" : "select"));
+  $("#playCancelBtn").addEventListener("click", () => {
+    pending = null; saveStore(PENDING_KEY, null);
+    showView(allSplits.length ? "result" : "select");
+  });
+  $("#saveResultBtn").addEventListener("click", () => {
+    const a = parseInt($("#goalsA").value, 10), b = parseInt($("#goalsB").value, 10);
+    if (!(a >= 0) || !(b >= 0)) { showStatus("Vul de doelpunten van beide teams in.", true); return; }
+    matches.push({ id: Date.now(), date: new Date().toISOString(), teamA: pending.teamA, teamB: pending.teamB, goalsA: a, goalsB: b });
+    saveStore(STORE_KEY, matches);
+    pending = null; saveStore(PENDING_KEY, null);
+    showStatus("Uitslag opgeslagen");
+    showView("stand");
+  });
+
+  /* --- statistieken --- */
+  const newRec = () => ({ g: 0, w: 0, gl: 0, v: 0, gf: 0, ga: 0 });
+  function addRec(r, out, gf, ga) { r.g++; r[out]++; r.gf += gf; r.ga += ga; }
+  const pctTxt = (r) => (r.g ? Math.round((r.w / r.g) * 100) + "%" : "–");
+
+  function computeStats() {
+    const pl = {}, teams = {};
+    matches.forEach((m) => {
+      const res = m.goalsA > m.goalsB ? "A" : m.goalsA < m.goalsB ? "B" : "G";
+      [["A", m.teamA, m.teamB, m.goalsA, m.goalsB], ["B", m.teamB, m.teamA, m.goalsB, m.goalsA]].forEach(([side, mine, other, gf, ga]) => {
+        const out = res === "G" ? "gl" : res === side ? "w" : "v";
+        mine.forEach((n) => {
+          const p = pl[n] || (pl[n] = Object.assign(newRec(), { met: {}, tegen: {} }));
+          addRec(p, out, gf, ga);
+          mine.filter((x) => x !== n).forEach((x) => addRec(p.met[x] || (p.met[x] = newRec()), out, gf, ga));
+          other.forEach((x) => addRec(p.tegen[x] || (p.tegen[x] = newRec()), out, gf, ga));
+        });
+        const names = mine.slice().sort((x, y) => x.localeCompare(y));
+        const key = names.join("|");
+        addRec(teams[key] || (teams[key] = Object.assign(newRec(), { names })), out, gf, ga);
+      });
+    });
+    return { pl, teams };
+  }
+
+  const relRows = (obj) => Object.entries(obj)
+    .sort((a, b) => b[1].g - a[1].g || b[1].w - a[1].w || a[0].localeCompare(b[0]))
+    .map(([n, r]) => `<div class="rel"><span>${escapeHTML(n)}</span><span class="d">${r.g}× · ${r.w}-${r.gl}-${r.v} · ${pctTxt(r)}</span></div>`).join("");
+
+  function renderStand() {
+    $("#matchCount").textContent = matches.length + (matches.length === 1 ? " wedstrijd" : " wedstrijden");
+    const body = $("#standBody");
+    if (!matches.length) {
+      body.innerHTML = `<div class="card empty">Nog geen uitslagen.<br>Genereer teams en kies “Speel met deze teams” om de eerste uitslag in te voeren.</div>`;
+      return;
+    }
+    const { pl } = computeStats();
+    const rows = Object.entries(pl).sort((a, b) => b[1].w / b[1].g - a[1].w / a[1].g || b[1].g - a[1].g || a[0].localeCompare(b[0]));
+    const fmtDate = (iso) => new Date(iso).toLocaleDateString("nl-NL", { timeZone: "Europe/Amsterdam", weekday: "short", day: "numeric", month: "short" });
+    body.innerHTML = `
+      <div class="card stats">
+        <div class="stats-hd"><span></span><span>Speler</span><span>G</span><span>W</span><span>GL</span><span>V</span><span>Win%</span></div>
+        ${rows.map(([n, r], i) => `
+          <details>
+            <summary><span class="pos">${i + 1}</span><span class="nm">${escapeHTML(n)}</span><span>${r.g}</span><span>${r.w}</span><span>${r.gl}</span><span>${r.v}</span><span class="pc">${pctTxt(r)}</span></summary>
+            <div class="rel-wrap">
+              <div class="rel-col"><h4>Samen met</h4>${relRows(r.met) || '<div class="rel"><span class="d">–</span></div>'}</div>
+              <div class="rel-col"><h4>Tegen</h4>${relRows(r.tegen) || '<div class="rel"><span class="d">–</span></div>'}</div>
+            </div>
+          </details>`).join("")}
+      </div>
+      <p class="legend">G gespeeld · W gewonnen · GL gelijk · V verloren. Bij “Samen met” en “Tegen”: aantal wedstrijden · W-GL-V · Win%.</p>
+      <div class="sub-title">Alle wedstrijden</div>
+      <div class="card stats">
+        ${matches.slice().reverse().map((m) => `
+          <div class="mrow">
+            <div class="md">${fmtDate(m.date)}</div>
+            <div class="mt"><span class="a">${m.teamA.map(escapeHTML).join(", ")}</span><b>${m.goalsA} – ${m.goalsB}</b><span class="b">${m.teamB.map(escapeHTML).join(", ")}</span></div>
+            <button type="button" data-id="${m.id}">Wis</button>
+          </div>`).join("")}
+      </div>`;
+    body.querySelectorAll(".mrow button").forEach((btn) => btn.addEventListener("click", () => {
+      if (!btn.classList.contains("armed")) {
+        btn.classList.add("armed"); btn.textContent = "Zeker?";
+        setTimeout(() => { btn.classList.remove("armed"); btn.textContent = "Wis"; }, 3000);
+        return;
+      }
+      matches = matches.filter((m) => String(m.id) !== btn.dataset.id);
+      saveStore(STORE_KEY, matches);
+      renderStand();
+    }));
+  }
+
+  function renderTeams() {
+    const body = $("#teamsBody");
+    if (!matches.length) {
+      body.innerHTML = `<div class="card empty">Nog geen uitslagen.<br>Zodra er wedstrijden zijn gespeeld, zie je hier welke teamindelingen het best presteerden.</div>`;
+      return;
+    }
+    const all = Object.values(computeStats().teams);
+    const diff = (t) => t.gf - t.ga;
+    const card = (t) => `
+      <div class="card tcard">
+        <div class="tn">${t.names.map(escapeHTML).join(", ")}</div>
+        <div class="tr"><b>${pctTxt(t)}</b><span>${t.g}× · ${t.w}-${t.gl}-${t.v} · ${diff(t) > 0 ? "+" : ""}${diff(t)}</span></div>
+      </div>`;
+    const sorter = (a, b) => b.w / b.g - a.w / a.g || b.g - a.g || diff(b) - diff(a);
+    const repeated = all.filter((t) => t.g >= 2).sort(sorter);
+    const once = all.filter((t) => t.g < 2).sort((a, b) => b.w - a.w || diff(b) - diff(a));
+    body.innerHTML =
+      (repeated.length ? repeated.map(card).join("") : `<div class="card empty">Nog geen team is twee keer in dezelfde samenstelling gespeeld.</div>`) +
+      (once.length ? `<div class="sub-title">Eenmalig gespeeld</div>` + once.map(card).join("") : "") +
+      `<p class="legend">Win% · aantal wedstrijden · W-GL-V · doelsaldo. Teams met minstens 2 wedstrijden staan bovenaan, gerangschikt op Win%.</p>`;
+  }
+
+  /* --- back-up --- */
+  $("#backupMake").addEventListener("click", () => {
+    const ta = $("#backupText");
+    ta.value = JSON.stringify(matches);
+    ta.focus(); ta.select();
+    try { navigator.clipboard.writeText(ta.value).then(() => showStatus("Back-up gekopieerd"), () => showStatus("Selecteer en kopieer de tekst")); }
+    catch (e) { showStatus("Selecteer en kopieer de tekst"); }
+  });
+  $("#backupRestore").addEventListener("click", () => {
+    let data;
+    try { data = JSON.parse($("#backupText").value); } catch (e) { data = null; }
+    if (!Array.isArray(data) || !data.every(validMatch)) { showStatus("Dit is geen geldige back-up.", true); return; }
+    matches = data.map((m, i) => Object.assign({ id: Date.now() + i, date: new Date().toISOString() }, m));
+    saveStore(STORE_KEY, matches);
+    renderStand();
+    showStatus(`${matches.length} wedstrijden hersteld`);
   });
 
   /* ============================================================
@@ -737,6 +1034,7 @@
   buildRoster();
   renderOpts();
   updateCounter();
+  if (pending) { renderPlay(); showView("play"); }
 })();
 </script>
 </body>
