@@ -214,6 +214,8 @@
   .btn.primary { background: var(--accent); color: var(--accent-ink); }
   .btn.ghost { background: var(--surface-2); color: var(--text); flex: .5; }
   .btn.soft-orange { background: var(--teamB-soft); color: var(--teamB); }
+  .btn.subtle { background: var(--surface-2); color: var(--text-dim); font-size: 13px; font-weight: 600; padding: 10px 8px; border-radius: 12px; }
+  .nav-row { display: flex; gap: 8px; margin-top: 10px; }
   .btn.text { background: none; color: var(--accent); padding: 10px; }
   .hint { text-align: center; font-size: 12.5px; color: var(--text-faint); margin-top: 10px; }
   .status-msg {
@@ -338,7 +340,7 @@
           <h3>Samen of apart</h3>
           <div class="fields">
             <select id="ruleA" aria-label="Speler 1"></select>
-            <select id="ruleType" aria-label="Samen of apart"><option value="samen">samen</option><option value="apart">apart</option></select>
+            <select id="ruleType" aria-label="Samen of apart"><option value="samen">samen met</option><option value="apart">apart van</option></select>
             <select id="ruleB" aria-label="Speler 2"></select>
             <button type="button" class="add" id="ruleAdd">Voeg toe</button>
           </div>
@@ -407,8 +409,10 @@
     </div>
 
     <button class="btn primary" id="playBtn" style="width:100%;margin-top:16px">⚽ Speel met deze teams</button>
-    <button class="btn ghost" id="nextBtn" style="width:100%;margin-top:10px">Volgende verdeling</button>
-    <button class="btn soft-orange" id="prevBtn" style="width:100%;margin-top:10px">Vorige verdeling</button>
+    <div class="nav-row">
+      <button class="btn subtle" id="prevBtn">← Vorige verdeling</button>
+      <button class="btn subtle" id="nextBtn">Volgende verdeling →</button>
+    </div>
     <button class="btn ghost back-btn" id="backBtn" style="width:100%">↩ Nieuwe selectie</button>
   </main>
 
@@ -658,7 +662,7 @@
     const ra = $("#ruleA").value, rb = $("#ruleB").value;
     $("#ruleA").innerHTML = opts(ra || names[0]);
     $("#ruleB").innerHTML = opts(rb || names[1]);
-    $("#ruleList").innerHTML = rules.map((r, i) => `<span class="chip">${escapeHTML(r.a)} + ${escapeHTML(r.b)} ${r.type}<button type="button" data-r="${i}" aria-label="Verwijder regel">×</button></span>`).join("");
+    $("#ruleList").innerHTML = rules.map((r, i) => `<span class="chip">${escapeHTML(r.a)} ${r.type === "samen" ? "samen met" : "apart van"} ${escapeHTML(r.b)}<button type="button" data-r="${i}" aria-label="Verwijder regel">×</button></span>`).join("");
     $("#ruleList").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
       rules.splice(+b.dataset.r, 1); saveOpts(); renderOpts();
     }));
