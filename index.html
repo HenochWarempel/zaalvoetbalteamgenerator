@@ -109,6 +109,104 @@
   .check svg { width: 13px; height: 13px; opacity: 0; transition: opacity .1s; }
   .prow.sel .check svg { opacity: 1; }
 
+  /* ---------- gastspeler ---------- */
+  .guest-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); }
+  .guest-del {
+    width: 22px; height: 22px; border: none; border-radius: 50%; flex: none; cursor: pointer;
+    background: var(--surface-2); color: var(--text-dim); font-size: 14px; line-height: 1; padding: 0;
+  }
+  .guest-form { padding: 14px; margin-top: 12px; }
+  .guest-form .fields { display: flex; gap: 8px; }
+  .guest-form input {
+    min-width: 0; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 14px; font-weight: 600;
+  }
+  .guest-form input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  #guestName { flex: 1; }
+  #guestScore { width: 84px; }
+  .guest-form .btnrow { margin-top: 10px; }
+  .guest-form .btn { padding: 11px; font-size: 14px; }
+
+  /* ---------- voorkeuren ---------- */
+  .opts { margin-top: 12px; padding: 0 14px; }
+  .opts summary { cursor: pointer; padding: 13px 0; font-size: 13px; font-weight: 700; color: var(--text-dim); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .opts summary::-webkit-details-marker { display: none; }
+  .opts summary::after { content: "+"; font-size: 18px; line-height: 1; }
+  .opts[open] summary::after { content: "–"; }
+  .opts-body { padding-bottom: 14px; display: flex; flex-direction: column; gap: 14px; }
+  .opts h3 { margin: 0 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+  .opts .fields { display: flex; gap: 6px; flex-wrap: wrap; }
+  .opts select {
+    flex: 1; min-width: 90px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 10px; padding: 9px 8px; font-family: inherit; font-size: 14px; font-weight: 600;
+  }
+  .opts .add { flex: none; border: none; border-radius: 10px; padding: 9px 14px; background: var(--accent); color: var(--accent-ink); font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border-radius: 100px; padding: 5px 6px 5px 11px; font-size: 13px; font-weight: 600; }
+  .chip button { width: 20px; height: 20px; border: none; border-radius: 50%; background: var(--border); color: var(--text-dim); cursor: pointer; padding: 0; line-height: 1; }
+
+  /* ---------- tabs ---------- */
+  .tabs { display: flex; gap: 4px; padding: 4px; margin-bottom: 18px; background: var(--surface-2); border-radius: 14px; }
+  .tabs button {
+    flex: 1; border: none; background: none; border-radius: 10px; padding: 9px 4px; cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 700; color: var(--text-dim);
+  }
+  .tabs button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(20,20,20,.08); }
+
+  /* ---------- wedstrijd / uitslag ---------- */
+  .score-card { padding: 18px 14px; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .score-card label { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .score-card label.A { color: var(--teamA); } .score-card label.B { color: var(--teamB); }
+  .score-card input {
+    width: 84px; text-align: center; font-family: inherit; font-size: 34px; font-weight: 800; color: var(--text);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 10px 0;
+  }
+  .score-card input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .score-card .colon { font-size: 28px; font-weight: 800; color: var(--text-faint); padding-top: 20px; }
+  .play-meta { display: flex; gap: 10px; margin-top: 12px; }
+
+  /* ---------- stand / statistieken ---------- */
+  .empty { text-align: center; color: var(--text-dim); font-size: 14px; padding: 36px 16px; line-height: 1.5; }
+  .stats { padding: 0 12px; }
+  .stats-hd, .stats summary { display: grid; grid-template-columns: 22px 1fr 26px 26px 26px 26px 44px; gap: 4px; align-items: center; }
+  .stats-hd { padding: 10px 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); border-bottom: 1px solid var(--border); }
+  .stats-hd span:nth-child(n+3), .stats summary span:nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+  .stats details { border-bottom: 1px solid var(--border); }
+  .stats details:last-child { border-bottom: none; }
+  .stats summary { list-style: none; cursor: pointer; padding: 11px 0; font-size: 14px; }
+  .stats summary::-webkit-details-marker { display: none; }
+  .stats summary .nm { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stats summary .pos { color: var(--text-faint); font-size: 12px; font-weight: 700; }
+  .stats summary .pc { font-weight: 800; color: var(--accent); }
+  .rel-wrap { display: flex; gap: 14px 16px; padding: 2px 0 14px 26px; flex-wrap: wrap; }
+  .rel-col { flex: 1 1 220px; min-width: 0; }
+  .rel-col h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+  .rel { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 3px 0; }
+  .rel .d { color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .legend { font-size: 12px; color: var(--text-faint); margin: 8px 2px 0; }
+  .tcard { padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+  .tcard .tn { font-size: 14px; font-weight: 600; line-height: 1.4; min-width: 0; }
+  .tcard .tr { text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+  .tcard .tr b { display: block; font-size: 18px; font-weight: 800; color: var(--accent); }
+  .tcard .tr span { font-size: 12px; color: var(--text-dim); }
+  .sub-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin: 20px 2px 8px; }
+  .mrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .mrow:last-child { border-bottom: none; }
+  .mrow .md { flex: none; width: 56px; color: var(--text-faint); font-weight: 600; font-size: 12px; }
+  .mrow .mt { flex: 1; min-width: 0; line-height: 1.4; }
+  .mrow .mt .a { color: var(--teamA); font-weight: 600; } .mrow .mt .b { color: var(--teamB); font-weight: 600; }
+  .mrow .mt b { margin: 0 4px; font-size: 14px; }
+  .mrow button { flex: none; border: none; background: var(--surface-2); color: var(--text-dim); border-radius: 8px; padding: 6px 9px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
+  .mrow button.armed { background: var(--danger); color: #fff; }
+  .opts input[type=url], .opts input[type=text] {
+    min-width: 0; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 14px;
+  }
+  .backup { margin-top: 16px; }
+  .backup textarea { width: 100%; min-height: 80px; resize: vertical; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 12px; }
+  .backup .btnrow { margin-top: 8px; }
+  .backup .btn { padding: 10px; font-size: 13px; }
+
   /* ---------- buttons ---------- */
   .btnrow { display: flex; gap: 10px; margin-top: 16px; }
   .btn {
@@ -120,6 +218,8 @@
   .btn.primary { background: var(--accent); color: var(--accent-ink); }
   .btn.ghost { background: var(--surface-2); color: var(--text); flex: .5; }
   .btn.soft-orange { background: var(--teamB-soft); color: var(--teamB); }
+  .btn.subtle { background: var(--surface-2); color: var(--text-dim); font-size: 13px; font-weight: 600; padding: 10px 8px; border-radius: 12px; }
+  .nav-row { display: flex; gap: 8px; margin-top: 10px; }
   .btn.text { background: none; color: var(--accent); padding: 10px; }
   .hint { text-align: center; font-size: 12.5px; color: var(--text-faint); margin-top: 10px; }
   .status-msg {
@@ -172,7 +272,9 @@
   .balance-full { margin-top: 12px; }
   .balance-full .row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
   .balance-full .row .a { color: var(--teamA); } .balance-full .row .b { color: var(--teamB); }
-  .balance-full .bar { height: 10px; border-radius: 6px; overflow: hidden; display: flex; background: var(--surface-2); }
+  .balance-full .bar { position: relative; height: 12px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
+  .balance-full .bar::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--text-faint); z-index: 1; }
+  .balance-full .fill { position: absolute; top: 0; bottom: 0; width: 0; transition: width .3s, left .3s; }
   .balance-full .tag { text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 8px; font-weight: 600; }
 
   .back-btn { margin-top: 22px; }
@@ -207,6 +309,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     </button>
   </header>
+  <nav class="tabs" id="tabs">
+    <button type="button" class="active" data-tab="indelen">Indelen</button>
+    <button type="button" data-tab="stand">Stand</button>
+    <button type="button" data-tab="teams">Sterkste teams</button>
+  </nav>
   <p class="status-msg" id="statusMsg"></p>
 
   <!-- ===================== SELECTIE ===================== -->
@@ -216,6 +323,35 @@
       <span class="pill" id="counter">0 gekozen</span>
     </div>
     <div id="roster"></div>
+
+    <button class="btn text" id="guestToggle" style="width:100%;margin-top:6px">+ Gastspeler toevoegen</button>
+    <form class="card guest-form" id="guestForm" hidden>
+      <div class="fields">
+        <input type="text" id="guestName" placeholder="Naam" maxlength="20" autocomplete="off" required>
+        <input type="number" id="guestScore" placeholder="Score" min="1" max="10" step="any" inputmode="decimal" required>
+      </div>
+      <div class="btnrow">
+        <button type="button" class="btn ghost" id="guestCancel">Annuleer</button>
+        <button type="submit" class="btn primary">Toevoegen</button>
+      </div>
+      <p class="hint">Score van 1 t/m 10 · alleen voor vanavond</p>
+    </form>
+
+    <details class="card opts" id="opts">
+      <summary>Voorkeuren (optioneel) <span class="pill" id="optsCount" hidden></span></summary>
+      <div class="opts-body">
+        <div>
+          <h3>Samen of apart</h3>
+          <div class="fields">
+            <select id="ruleA" aria-label="Speler 1"></select>
+            <select id="ruleType" aria-label="Samen of apart"><option value="samen">samen met</option><option value="apart">apart van</option></select>
+            <select id="ruleB" aria-label="Speler 2"></select>
+            <button type="button" class="add" id="ruleAdd">Voeg toe</button>
+          </div>
+          <div class="chips" id="ruleList"></div>
+        </div>
+      </div>
+    </details>
 
     <div class="btnrow">
       <button class="btn ghost" id="clearBtn">Wis</button>
@@ -258,7 +394,7 @@
       </div>
       <div class="balance-full">
         <div class="row"><span class="a">◀ Team A</span><span class="b">Team B ▶</span></div>
-        <div class="bar"><div id="balBarA" style="background:var(--teamA)"></div><div id="balBarB" style="background:var(--teamB)"></div></div>
+        <div class="bar"><div class="fill" id="balFill"></div></div>
         <div class="tag" id="balTag"></div>
       </div>
     </div>
@@ -276,9 +412,94 @@
       </div>
     </div>
 
-    <button class="btn primary" id="nextBtn" style="width:100%;margin-top:16px">Volgende verdeling</button>
-    <button class="btn soft-orange" id="prevBtn" style="width:100%;margin-top:10px">Vorige verdeling</button>
+    <button class="btn primary" id="playBtn" style="width:100%;margin-top:16px">⚽ Speel met deze teams</button>
+    <div class="nav-row">
+      <button class="btn subtle" id="prevBtn">← Vorige verdeling</button>
+      <button class="btn subtle" id="nextBtn">Volgende verdeling →</button>
+    </div>
     <button class="btn ghost back-btn" id="backBtn" style="width:100%">↩ Nieuwe selectie</button>
+  </main>
+
+  <!-- ===================== WEDSTRIJD ===================== -->
+  <main id="view-play" hidden>
+    <div class="section-title">
+      <h2>Wedstrijd</h2>
+      <span class="pill ready">bezig</span>
+    </div>
+    <div class="card team-card">
+      <div class="teamgrid">
+        <div class="teamcol">
+          <div class="teamcol-hd A"><span class="name">Team A</span></div>
+          <div id="playAList"></div>
+        </div>
+        <div class="teamcol">
+          <div class="teamcol-hd B"><span class="name">Team B</span></div>
+          <div id="playBList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="play-meta">
+      <div class="badge-card A"><span class="ico">🦺</span><div><div class="lbl">Hesjes</div><div class="val" id="playHesjes">—</div></div></div>
+      <div class="badge-card B"><span class="ico">⚽</span><div><div class="lbl">Trapt af</div><div class="val" id="playAftrap">—</div></div></div>
+    </div>
+    <div class="section-title"><h2>Uitslag</h2></div>
+    <div class="card score-card">
+      <label class="A">Team A<input type="number" id="goalsA" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+      <span class="colon">:</span>
+      <label class="B">Team B<input type="number" id="goalsB" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+    </div>
+    <button class="btn primary" id="saveResultBtn" style="width:100%;margin-top:16px">Uitslag opslaan</button>
+    <button class="btn ghost" id="playBackBtn" style="width:100%;margin-top:10px">← Terug naar indeling</button>
+    <button class="btn text" id="playCancelBtn" style="width:100%;margin-top:4px">Wedstrijd annuleren</button>
+  </main>
+
+  <!-- ===================== STAND ===================== -->
+  <main id="view-stand" hidden>
+    <div class="section-title">
+      <h2>Stand per speler</h2>
+      <span class="pill" id="matchCount"></span>
+    </div>
+    <div id="standBody"></div>
+
+    <details class="card opts backup" id="syncBox">
+      <summary>Synchroniseren tussen apparaten <span class="pill" id="syncBadge" hidden>aan</span></summary>
+      <div class="opts-body">
+        <p class="legend" style="margin:0" id="syncStatus">Niet gekoppeld. Uitslagen staan alleen op dit apparaat.</p>
+        <div id="syncForm" class="opts-body" style="padding:0">
+          <input type="url" id="syncUrl" placeholder="Web-app-URL van Google Apps Script" autocomplete="off" spellcheck="false">
+          <input type="text" id="syncToken" placeholder="Wachtwoord (TOKEN uit het script)" autocomplete="off" spellcheck="false">
+          <button type="button" class="btn primary" id="syncConnect">Koppel</button>
+        </div>
+        <div id="syncOn" class="opts-body" style="padding:0" hidden>
+          <div class="btnrow" style="margin-top:0">
+            <button type="button" class="btn ghost" id="syncNowBtn" style="flex:1">Nu synchroniseren</button>
+            <button type="button" class="btn ghost" id="syncOff" style="flex:1">Ontkoppel</button>
+          </div>
+          <p class="legend" style="margin:0">Open deze link op een ander apparaat om het daar te koppelen. Deel hem alleen met mensen die de uitslagen mogen zien.</p>
+          <textarea id="syncLink" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <details class="card opts backup">
+      <summary>Back-up</summary>
+      <div class="opts-body">
+        <p class="legend" style="margin:0">Uitslagen staan alleen in deze browser. Maak een back-up om ze te bewaren of op een ander apparaat te zetten.</p>
+        <textarea id="backupText" placeholder="Back-up verschijnt hier. Plak een back-up hier om te herstellen." spellcheck="false"></textarea>
+        <div class="btnrow">
+          <button type="button" class="btn ghost" id="backupMake" style="flex:1">Back-up maken</button>
+          <button type="button" class="btn ghost" id="backupRestore" style="flex:1">Herstellen</button>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <!-- ===================== STERKSTE TEAMS ===================== -->
+  <main id="view-teams" hidden>
+    <div class="section-title">
+      <h2>Sterkste teams</h2>
+    </div>
+    <div id="teamsBody"></div>
   </main>
 
 </div>
@@ -319,6 +540,7 @@
   ];
   const decodeRank = (e) => parseFloat(atob(e));
   const players = encodedPlayers.map((p) => ({ name: p.name, rank: decodeRank(p.rank), selected: false }));
+  const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   function hashStr(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 
@@ -371,12 +593,6 @@
     splits.sort((a, b) => a.diff - b.diff);
     return splits;
   }
-  function balanceTag(diff) {
-    if (diff < 0.1)  return "Vrijwel perfect in balans";
-    if (diff < 0.25) return "Goed gebalanceerd";
-    if (diff < 0.5)  return "Redelijk eerlijk";
-    return "Duidelijk scheve verdeling";
-  }
 
   /* ============================================================
      UI helpers
@@ -397,14 +613,24 @@
 
   function buildRoster() {
     roster.innerHTML = players.map((p, i) => `
-      <div class="prow" data-i="${i}">
+      <div class="prow${p.selected ? " sel" : ""}" data-i="${i}">
         <div class="avatar" style="${avatarStyle(p.name)}">${initials(p.name)}</div>
         <div class="pbody">
-          <div class="pname">${p.name}</div>
+          <div class="pname">${escapeHTML(p.name)}</div>
+          ${p.guest ? '<div class="guest-tag">Gast</div>' : ""}
         </div>
+        ${p.guest ? '<button type="button" class="guest-del" aria-label="Verwijder gastspeler">×</button>' : ""}
         <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       </div>`).join("");
     roster.querySelectorAll(".prow").forEach((row) => {
+      const del = $(".guest-del", row);
+      if (del) del.addEventListener("click", (e) => {
+        e.stopPropagation();
+        players.splice(+row.dataset.i, 1);
+        buildRoster();
+        renderOpts();
+        updateCounter();
+      });
       row.addEventListener("click", () => {
         const p = players[+row.dataset.i];
         p.selected = !p.selected;
@@ -419,6 +645,68 @@
     counter.textContent = `${n} gekozen`;
     counter.classList.toggle("ready", n >= 6 && n <= 11);
     genBtn.disabled = !(n >= 6 && n <= 11);
+  }
+
+  /* gastspeler: alleen in het geheugen, dus weg na verversen */
+  const guestForm = $("#guestForm"), guestName = $("#guestName"), guestScore = $("#guestScore");
+  function toggleGuestForm(show) {
+    guestForm.hidden = !show;
+    $("#guestToggle").hidden = show;
+    if (show) guestName.focus();
+  }
+  $("#guestToggle").addEventListener("click", () => toggleGuestForm(true));
+  $("#guestCancel").addEventListener("click", () => { guestForm.reset(); toggleGuestForm(false); });
+  guestForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = guestName.value.replace(/,/g, " ").trim();
+    const rank = parseFloat(guestScore.value);
+    if (!name) { showStatus("Vul een naam in.", true); return; }
+    if (isNaN(rank) || rank < 1 || rank > 10) { showStatus("Score moet tussen 1 en 10 liggen.", true); return; }
+    if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) { showStatus("Deze naam bestaat al.", true); return; }
+    players.push({ name, rank, selected: players.filter((p) => p.selected).length < 11, guest: true });
+    buildRoster();
+    renderOpts();
+    updateCounter();
+    guestForm.reset();
+    toggleGuestForm(false);
+    showStatus(`${name} is toegevoegd`);
+  });
+
+  /* voorkeuren: samen/apart-regels (optioneel, onthouden op dit apparaat) */
+  let rules = [];
+  try {
+    const saved = JSON.parse(localStorage.getItem("zv-voorkeuren") || "null");
+    if (saved) rules = saved.rules || [];
+  } catch (e) {}
+  function saveOpts() { try { localStorage.setItem("zv-voorkeuren", JSON.stringify({ rules })); } catch (e) {} }
+
+  function renderOpts() {
+    const names = players.map((p) => p.name);
+    const opts = (cur) => names.map((n) => `<option value="${escapeHTML(n)}"${n === cur ? " selected" : ""}>${escapeHTML(n)}</option>`).join("");
+    const ra = $("#ruleA").value, rb = $("#ruleB").value;
+    $("#ruleA").innerHTML = opts(ra || names[0]);
+    $("#ruleB").innerHTML = opts(rb || names[1]);
+    $("#ruleList").innerHTML = rules.map((r, i) => `<span class="chip">${escapeHTML(r.a)} ${r.type === "samen" ? "samen met" : "apart van"} ${escapeHTML(r.b)}<button type="button" data-r="${i}" aria-label="Verwijder regel">×</button></span>`).join("");
+    $("#ruleList").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+      rules.splice(+b.dataset.r, 1); saveOpts(); renderOpts();
+    }));
+    $("#optsCount").hidden = rules.length === 0;
+    $("#optsCount").textContent = rules.length + " actief";
+  }
+  $("#ruleAdd").addEventListener("click", () => {
+    const a = $("#ruleA").value, b = $("#ruleB").value, type = $("#ruleType").value;
+    if (a === b) { showStatus("Kies twee verschillende spelers.", true); return; }
+    if (rules.some((r) => (r.a === a && r.b === b) || (r.a === b && r.b === a))) { showStatus("Voor dit tweetal bestaat al een regel.", true); return; }
+    rules.push({ a, b, type }); saveOpts(); renderOpts();
+  });
+  function meetsPrefs(s) {
+    const side = {};
+    s.teamA.forEach((p) => (side[p.name] = "A"));
+    s.teamB.forEach((p) => (side[p.name] = "B"));
+    for (const r of rules) {
+      if (side[r.a] && side[r.b] && (r.type === "samen") !== (side[r.a] === side[r.b])) return false;
+    }
+    return true;
   }
 
   function flashMsg(el, msg, isError) {
@@ -439,15 +727,12 @@
     return team.slice().sort((a, b) => a.name.localeCompare(b.name)).map((p) => `
       <div class="tplayer">
         <div class="avatar" style="${avatarStyle(p.name)}">${initials(p.name)}</div>
-        <div class="pname">${p.name}</div>
+        <div class="pname">${escapeHTML(p.name)}</div>
       </div>`).join("");
   }
 
   function renderResult() {
     const s = allSplits[currentIndex];
-    const totalAvg = s.avgA + s.avgB;
-    const wA = ((s.avgA / totalAvg) * 100).toFixed(1);
-    const wB = (100 - wA).toFixed(1);
     const isBest = currentIndex === 0;
     const fairLabel = isBest
       ? "Meest eerlijke indeling"
@@ -459,9 +744,18 @@
     fairLine.classList.toggle("best", isBest);
     $("#teamAList").innerHTML = teamPlayersHTML(s.teamA);
     $("#teamBList").innerHTML = teamPlayersHTML(s.teamB);
-    $("#balBarA").style.width = wA + "%";
-    $("#balBarB").style.width = wB + "%";
-    $("#balTag").textContent = balanceTag(s.diff);
+    // balk begint in het midden en groeit richting het sterkste team; volle halve balk = de scheefste indeling van deze selectie
+    const worstDiff = allSplits[allSplits.length - 1].diff || 1;
+    const half = Math.min(s.diff / worstDiff, 1) * 50;
+    const aStronger = s.avgA > s.avgB;
+    const fill = $("#balFill");
+    fill.style.width = half + "%";
+    fill.style.left = (aStronger ? 50 - half : 50) + "%";
+    fill.style.background = aStronger ? "var(--teamA)" : "var(--teamB)";
+    const pct = (Math.abs(s.avgA - s.avgB) / Math.min(s.avgA, s.avgB)) * 100;
+    $("#balTag").textContent = pct.toFixed(1) === "0.0"
+      ? "Teams zijn even sterk"
+      : `Team ${aStronger ? "A" : "B"} is ${pct.toFixed(1).replace(".", ",")}% sterker`;
 
     $("#prevBtn").disabled = currentIndex === 0;
     $("#nextBtn").disabled = currentIndex + 1 >= allSplits.length;
@@ -484,17 +778,17 @@
   function onGenerate() {
     const sel = players.filter((p) => p.selected);
     if (sel.length < 6 || sel.length > 11) { showStatus("Kies tussen de 6 en 11 spelers.", true); return; }
-    allSplits = generateAllSplits(sel);
-    if (allSplits.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal.", true); return; }
+    const all = generateAllSplits(sel);
+    if (all.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal.", true); return; }
+    allSplits = all.filter(meetsPrefs);
+    if (allSplits.length === 0) { showStatus("Geen indeling mogelijk met deze voorkeuren.", true); return; }
     baselineDiff = allSplits[0].diff;
     currentIndex = 0;
     deelnemers = sel.length;
     renderLogistics();
     coinFlips();
     renderResult();
-    viewSelect.hidden = true;
-    viewResult.hidden = false;
-    window.scrollTo(0, 0);
+    showView("result");
   }
 
   $("#genBtn").addEventListener("click", onGenerate);
@@ -518,14 +812,266 @@
     window.scrollTo(0, 0);
   });
   $("#backBtn").addEventListener("click", () => {
-    viewResult.hidden = true;
-    viewSelect.hidden = false;
-    window.scrollTo(0, 0);
+    showView("select");
   });
   $("#tikkieTotalInput").addEventListener("input", (e) => {
     const v = parseFloat(e.target.value);
     tikkieTotal = isNaN(v) || v < 0 ? 0 : v;
     renderLogistics();
+  });
+
+  /* ============================================================
+     WEDSTRIJDEN, STAND EN TEAMS
+     Uitslagen staan in localStorage (alleen op dit apparaat).
+     ============================================================ */
+  const STORE_KEY = "zv-uitslagen", PENDING_KEY = "zv-lopend";
+  const loadStore = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
+  const saveStore = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const validMatch = (m) => m && Array.isArray(m.teamA) && Array.isArray(m.teamB) && m.teamA.concat(m.teamB).every((n) => typeof n === "string")
+    && Number.isInteger(m.goalsA) && Number.isInteger(m.goalsB) && m.goalsA >= 0 && m.goalsB >= 0;
+  let matches = loadStore(STORE_KEY, []);
+  matches = Array.isArray(matches) ? matches.filter(validMatch) : [];
+  let pending = loadStore(PENDING_KEY, null);
+  if (pending && !(Array.isArray(pending.teamA) && Array.isArray(pending.teamB))) pending = null;
+
+  const MAIN_VIEWS = ["select", "result", "play"];
+  let lastIndelen = "select";
+  function showView(name) {
+    if (MAIN_VIEWS.includes(name)) lastIndelen = name;
+    ["select", "result", "play", "stand", "teams"].forEach((k) => { $("#view-" + k).hidden = k !== name; });
+    const tab = MAIN_VIEWS.includes(name) ? "indelen" : name;
+    document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+    if (name === "stand") renderStand();
+    if (name === "teams") renderTeams();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.tab !== "indelen") return showView(b.dataset.tab);
+    if (lastIndelen === "play" && !pending) lastIndelen = allSplits.length ? "result" : "select";
+    showView(lastIndelen);
+  }));
+
+  /* --- wedstrijd spelen --- */
+  function renderPlay() {
+    const asPlayers = (names) => names.map((name) => ({ name }));
+    $("#playAList").innerHTML = teamPlayersHTML(asPlayers(pending.teamA));
+    $("#playBList").innerHTML = teamPlayersHTML(asPlayers(pending.teamB));
+    $("#playHesjes").textContent = pending.hesjes || "—";
+    $("#playAftrap").textContent = pending.aftrap || "—";
+  }
+  $("#playBtn").addEventListener("click", () => {
+    const s = allSplits[currentIndex];
+    pending = { teamA: s.teamA.map((p) => p.name), teamB: s.teamB.map((p) => p.name), hesjes: $("#hesjesVal").textContent, aftrap: $("#aftrapVal").textContent };
+    saveStore(PENDING_KEY, pending);
+    $("#goalsA").value = ""; $("#goalsB").value = "";
+    renderPlay();
+    showView("play");
+  });
+  $("#playBackBtn").addEventListener("click", () => showView(allSplits.length ? "result" : "select"));
+  $("#playCancelBtn").addEventListener("click", () => {
+    pending = null; saveStore(PENDING_KEY, null);
+    showView(allSplits.length ? "result" : "select");
+  });
+  $("#saveResultBtn").addEventListener("click", () => {
+    const a = parseInt($("#goalsA").value, 10), b = parseInt($("#goalsB").value, 10);
+    if (!(a >= 0) || !(b >= 0)) { showStatus("Vul de doelpunten van beide teams in.", true); return; }
+    const match = { id: Date.now(), date: new Date().toISOString(), teamA: pending.teamA, teamB: pending.teamB, goalsA: a, goalsB: b };
+    matches.push(match);
+    saveStore(STORE_KEY, matches);
+    recordOp({ op: "add", match });
+    pending = null; saveStore(PENDING_KEY, null);
+    showStatus("Uitslag opgeslagen");
+    showView("stand");
+  });
+
+  /* --- statistieken --- */
+  const newRec = () => ({ g: 0, w: 0, gl: 0, v: 0, gf: 0, ga: 0 });
+  function addRec(r, out, gf, ga) { r.g++; r[out]++; r.gf += gf; r.ga += ga; }
+  const pctTxt = (r) => (r.g ? Math.round((r.w / r.g) * 100) + "%" : "–");
+
+  function computeStats() {
+    const pl = {}, teams = {};
+    matches.forEach((m) => {
+      const res = m.goalsA > m.goalsB ? "A" : m.goalsA < m.goalsB ? "B" : "G";
+      [["A", m.teamA, m.teamB, m.goalsA, m.goalsB], ["B", m.teamB, m.teamA, m.goalsB, m.goalsA]].forEach(([side, mine, other, gf, ga]) => {
+        const out = res === "G" ? "gl" : res === side ? "w" : "v";
+        mine.forEach((n) => {
+          const p = pl[n] || (pl[n] = Object.assign(newRec(), { met: {}, tegen: {} }));
+          addRec(p, out, gf, ga);
+          mine.filter((x) => x !== n).forEach((x) => addRec(p.met[x] || (p.met[x] = newRec()), out, gf, ga));
+          other.forEach((x) => addRec(p.tegen[x] || (p.tegen[x] = newRec()), out, gf, ga));
+        });
+        const names = mine.slice().sort((x, y) => x.localeCompare(y));
+        const key = names.join("|");
+        addRec(teams[key] || (teams[key] = Object.assign(newRec(), { names })), out, gf, ga);
+      });
+    });
+    return { pl, teams };
+  }
+
+  const relRows = (obj) => Object.entries(obj)
+    .sort((a, b) => b[1].g - a[1].g || b[1].w - a[1].w || a[0].localeCompare(b[0]))
+    .map(([n, r]) => `<div class="rel"><span>${escapeHTML(n)}</span><span class="d">${r.g}× · ${r.w}-${r.gl}-${r.v} · ${pctTxt(r)}</span></div>`).join("");
+
+  function renderStand() {
+    $("#matchCount").textContent = matches.length + (matches.length === 1 ? " wedstrijd" : " wedstrijden");
+    const body = $("#standBody");
+    if (!matches.length) {
+      body.innerHTML = `<div class="card empty">Nog geen uitslagen.<br>Genereer teams en kies “Speel met deze teams” om de eerste uitslag in te voeren.</div>`;
+      return;
+    }
+    const { pl } = computeStats();
+    const rows = Object.entries(pl).sort((a, b) => b[1].w / b[1].g - a[1].w / a[1].g || b[1].g - a[1].g || a[0].localeCompare(b[0]));
+    const fmtDate = (iso) => new Date(iso).toLocaleDateString("nl-NL", { timeZone: "Europe/Amsterdam", weekday: "short", day: "numeric", month: "short" });
+    body.innerHTML = `
+      <div class="card stats">
+        <div class="stats-hd"><span></span><span>Speler</span><span>G</span><span>W</span><span>GL</span><span>V</span><span>Win%</span></div>
+        ${rows.map(([n, r], i) => `
+          <details>
+            <summary><span class="pos">${i + 1}</span><span class="nm">${escapeHTML(n)}</span><span>${r.g}</span><span>${r.w}</span><span>${r.gl}</span><span>${r.v}</span><span class="pc">${pctTxt(r)}</span></summary>
+            <div class="rel-wrap">
+              <div class="rel-col"><h4>Samen met</h4>${relRows(r.met) || '<div class="rel"><span class="d">–</span></div>'}</div>
+              <div class="rel-col"><h4>Tegen</h4>${relRows(r.tegen) || '<div class="rel"><span class="d">–</span></div>'}</div>
+            </div>
+          </details>`).join("")}
+      </div>
+      <p class="legend">G gespeeld · W gewonnen · GL gelijk · V verloren. Bij “Samen met” en “Tegen”: aantal wedstrijden · W-GL-V · Win%.</p>
+      <div class="sub-title">Alle wedstrijden</div>
+      <div class="card stats">
+        ${matches.slice().reverse().map((m) => `
+          <div class="mrow">
+            <div class="md">${fmtDate(m.date)}</div>
+            <div class="mt"><span class="a">${m.teamA.map(escapeHTML).join(", ")}</span><b>${m.goalsA} – ${m.goalsB}</b><span class="b">${m.teamB.map(escapeHTML).join(", ")}</span></div>
+            <button type="button" data-id="${m.id}">Wis</button>
+          </div>`).join("")}
+      </div>`;
+    body.querySelectorAll(".mrow button").forEach((btn) => btn.addEventListener("click", () => {
+      if (!btn.classList.contains("armed")) {
+        btn.classList.add("armed"); btn.textContent = "Zeker?";
+        setTimeout(() => { btn.classList.remove("armed"); btn.textContent = "Wis"; }, 3000);
+        return;
+      }
+      matches = matches.filter((m) => String(m.id) !== btn.dataset.id);
+      saveStore(STORE_KEY, matches);
+      recordOp({ op: "del", id: Number(btn.dataset.id) });
+      renderStand();
+    }));
+  }
+
+  function renderTeams() {
+    const body = $("#teamsBody");
+    if (!matches.length) {
+      body.innerHTML = `<div class="card empty">Nog geen uitslagen.<br>Zodra er wedstrijden zijn gespeeld, zie je hier welke teamindelingen het best presteerden.</div>`;
+      return;
+    }
+    const all = Object.values(computeStats().teams);
+    const diff = (t) => t.gf - t.ga;
+    const card = (t) => `
+      <div class="card tcard">
+        <div class="tn">${t.names.map(escapeHTML).join(", ")}</div>
+        <div class="tr"><b>${pctTxt(t)}</b><span>${t.g}× · ${t.w}-${t.gl}-${t.v} · ${diff(t) > 0 ? "+" : ""}${diff(t)}</span></div>
+      </div>`;
+    const sorter = (a, b) => b.w / b.g - a.w / a.g || b.g - a.g || diff(b) - diff(a);
+    const repeated = all.filter((t) => t.g >= 2).sort(sorter);
+    const once = all.filter((t) => t.g < 2).sort((a, b) => b.w - a.w || diff(b) - diff(a));
+    body.innerHTML =
+      (repeated.length ? repeated.map(card).join("") : `<div class="card empty">Nog geen team is twee keer in dezelfde samenstelling gespeeld.</div>`) +
+      (once.length ? `<div class="sub-title">Eenmalig gespeeld</div>` + once.map(card).join("") : "") +
+      `<p class="legend">Win% · aantal wedstrijden · W-GL-V · doelsaldo. Teams met minstens 2 wedstrijden staan bovenaan, gerangschikt op Win%.</p>`;
+  }
+
+  /* --- synchroniseren via Google Apps Script (zie SYNC.md) --- */
+  const SYNC_KEY = "zv-sync", QUEUE_KEY = "zv-wachtrij";
+  let syncCfg = loadStore(SYNC_KEY, null);
+  if (syncCfg && !(syncCfg.url && syncCfg.token)) syncCfg = null;
+  let syncQueue = loadStore(QUEUE_KEY, []);
+  if (!Array.isArray(syncQueue)) syncQueue = [];
+  let syncing = false;
+  const setSyncStatus = (t) => { $("#syncStatus").textContent = t; };
+  const hhmm = () => new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+
+  async function syncApi(body) {
+    const { url, token } = syncCfg;
+    const r = body
+      ? await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ token }, body)) })
+      : await fetch(url + (url.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(token));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    return j;
+  }
+  async function syncNow() {
+    if (!syncCfg || syncing) return;
+    syncing = true;
+    setSyncStatus("Synchroniseren…");
+    try {
+      if (syncQueue.length) { await syncApi({ ops: syncQueue }); syncQueue = []; saveStore(QUEUE_KEY, syncQueue); }
+      const j = await syncApi();
+      matches = (j.matches || []).filter(validMatch);
+      saveStore(QUEUE_KEY, syncQueue);
+      saveStore(STORE_KEY, matches);
+      setSyncStatus(`Gekoppeld · gesynchroniseerd om ${hhmm()}`);
+      if (!$("#view-stand").hidden) renderStand();
+      if (!$("#view-teams").hidden) renderTeams();
+    } catch (e) {
+      setSyncStatus("Synchroniseren niet gelukt. Wijzigingen staan lokaal en worden later opnieuw verstuurd.");
+    }
+    syncing = false;
+  }
+  function recordOp(op) {
+    if (!syncCfg) return;
+    syncQueue.push(op);
+    saveStore(QUEUE_KEY, syncQueue);
+    syncNow();
+  }
+  function renderSyncUI() {
+    const on = !!syncCfg;
+    $("#syncForm").hidden = on;
+    $("#syncOn").hidden = !on;
+    $("#syncBadge").hidden = !on;
+    if (on) {
+      try { $("#syncLink").value = location.href.split("#")[0] + "#koppel=" + encodeURIComponent(btoa(JSON.stringify(syncCfg))); } catch (e) {}
+    } else {
+      setSyncStatus("Niet gekoppeld. Uitslagen staan alleen op dit apparaat.");
+    }
+  }
+  function connectSync(cfg) {
+    syncCfg = cfg;
+    saveStore(SYNC_KEY, cfg);
+    syncQueue = matches.map((match) => ({ op: "add", match }));
+    saveStore(QUEUE_KEY, syncQueue);
+    renderSyncUI();
+    syncNow();
+  }
+  $("#syncConnect").addEventListener("click", () => {
+    const url = $("#syncUrl").value.trim(), token = $("#syncToken").value.trim();
+    if (!/^https:\/\/script\.google\.com\//.test(url) || !token) { showStatus("Vul de web-app-URL en het wachtwoord in.", true); return; }
+    connectSync({ url, token });
+  });
+  $("#syncNowBtn").addEventListener("click", syncNow);
+  $("#syncOff").addEventListener("click", () => {
+    syncCfg = null; syncQueue = [];
+    saveStore(SYNC_KEY, null); saveStore(QUEUE_KEY, null);
+    renderSyncUI();
+  });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") syncNow(); });
+
+  /* --- back-up --- */
+  $("#backupMake").addEventListener("click", () => {
+    const ta = $("#backupText");
+    ta.value = JSON.stringify(matches);
+    ta.focus(); ta.select();
+    try { navigator.clipboard.writeText(ta.value).then(() => showStatus("Back-up gekopieerd"), () => showStatus("Selecteer en kopieer de tekst")); }
+    catch (e) { showStatus("Selecteer en kopieer de tekst"); }
+  });
+  $("#backupRestore").addEventListener("click", () => {
+    let data;
+    try { data = JSON.parse($("#backupText").value); } catch (e) { data = null; }
+    if (!Array.isArray(data) || !data.every(validMatch)) { showStatus("Dit is geen geldige back-up.", true); return; }
+    matches = data.map((m, i) => Object.assign({ id: Date.now() + i, date: new Date().toISOString() }, m));
+    saveStore(STORE_KEY, matches);
+    recordOp({ op: "replace", matches });
+    renderStand();
+    showStatus(`${matches.length} wedstrijden hersteld`);
   });
 
   /* ============================================================
@@ -593,7 +1139,20 @@
      INIT
      ============================================================ */
   buildRoster();
+  renderOpts();
   updateCounter();
+  const pair = location.hash.match(/^#koppel=(.+)$/);
+  if (pair) {
+    try {
+      const cfg = JSON.parse(atob(decodeURIComponent(pair[1])));
+      if (/^https:\/\/script\.google\.com\//.test(cfg.url) && cfg.token) connectSync({ url: cfg.url, token: String(cfg.token) });
+    } catch (e) {}
+    history.replaceState(null, "", location.pathname + location.search);
+    showStatus("Gekoppeld met Google Sheet");
+  }
+  renderSyncUI();
+  syncNow();
+  if (pending) { renderPlay(); showView("play"); }
 })();
 </script>
 </body>
