@@ -127,6 +127,24 @@
   .guest-form .btnrow { margin-top: 10px; }
   .guest-form .btn { padding: 11px; font-size: 14px; }
 
+  /* ---------- voorkeuren ---------- */
+  .opts { margin-top: 12px; padding: 0 14px; }
+  .opts summary { cursor: pointer; padding: 13px 0; font-size: 13px; font-weight: 700; color: var(--text-dim); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .opts summary::-webkit-details-marker { display: none; }
+  .opts summary::after { content: "+"; font-size: 18px; line-height: 1; }
+  .opts[open] summary::after { content: "–"; }
+  .opts-body { padding-bottom: 14px; display: flex; flex-direction: column; gap: 14px; }
+  .opts h3 { margin: 0 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+  .opts .fields { display: flex; gap: 6px; flex-wrap: wrap; }
+  .opts select {
+    flex: 1; min-width: 90px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 10px; padding: 9px 8px; font-family: inherit; font-size: 14px; font-weight: 600;
+  }
+  .opts .add { flex: none; border: none; border-radius: 10px; padding: 9px 14px; background: var(--accent); color: var(--accent-ink); font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border-radius: 100px; padding: 5px 6px 5px 11px; font-size: 13px; font-weight: 600; }
+  .chip button { width: 20px; height: 20px; border: none; border-radius: 50%; background: var(--border); color: var(--text-dim); cursor: pointer; padding: 0; line-height: 1; }
+
   /* ---------- buttons ---------- */
   .btnrow { display: flex; gap: 10px; margin-top: 16px; }
   .btn {
@@ -249,6 +267,29 @@
       </div>
       <p class="hint">Score van 1 t/m 10 · alleen voor vanavond</p>
     </form>
+
+    <details class="card opts" id="opts">
+      <summary>Voorkeuren (optioneel) <span class="pill" id="optsCount" hidden></span></summary>
+      <div class="opts-body">
+        <div>
+          <h3>Samen of apart</h3>
+          <div class="fields">
+            <select id="ruleA" aria-label="Speler 1"></select>
+            <select id="ruleType" aria-label="Samen of apart"><option value="samen">samen</option><option value="apart">apart</option></select>
+            <select id="ruleB" aria-label="Speler 2"></select>
+            <button type="button" class="add" id="ruleAdd">Voeg toe</button>
+          </div>
+          <div class="chips" id="ruleList"></div>
+        </div>
+        <div>
+          <h3>Keepers (in verschillende teams)</h3>
+          <div class="fields">
+            <select id="keeper1" aria-label="Keeper 1"></select>
+            <select id="keeper2" aria-label="Keeper 2"></select>
+          </div>
+        </div>
+      </div>
+    </details>
 
     <div class="btnrow">
       <button class="btn ghost" id="clearBtn">Wis</button>
@@ -440,6 +481,7 @@
         e.stopPropagation();
         players.splice(+row.dataset.i, 1);
         buildRoster();
+        renderOpts();
         updateCounter();
       });
       row.addEventListener("click", () => {
@@ -476,11 +518,58 @@
     if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) { showStatus("Deze naam bestaat al.", true); return; }
     players.push({ name, rank, selected: players.filter((p) => p.selected).length < 11, guest: true });
     buildRoster();
+    renderOpts();
     updateCounter();
     guestForm.reset();
     toggleGuestForm(false);
     showStatus(`${name} is toegevoegd`);
   });
+
+  /* voorkeuren: samen/apart-regels en keepers (optioneel, onthouden op dit apparaat) */
+  let rules = [], keepers = ["", ""];
+  try {
+    const saved = JSON.parse(localStorage.getItem("zv-voorkeuren") || "null");
+    if (saved) { rules = saved.rules || []; keepers = saved.keepers || ["", ""]; }
+  } catch (e) {}
+  function saveOpts() { try { localStorage.setItem("zv-voorkeuren", JSON.stringify({ rules, keepers })); } catch (e) {} }
+
+  function renderOpts() {
+    const names = players.map((p) => p.name);
+    keepers = keepers.map((k) => (names.includes(k) ? k : ""));
+    const opts = (cur, blank) => (blank ? '<option value="">' + blank + "</option>" : "") +
+      names.map((n) => `<option value="${escapeHTML(n)}"${n === cur ? " selected" : ""}>${escapeHTML(n)}</option>`).join("");
+    const keep = (id, cur, blank) => { $(id).innerHTML = opts(cur, blank); };
+    const ra = $("#ruleA").value, rb = $("#ruleB").value;
+    keep("#ruleA", ra || names[0], ""); keep("#ruleB", rb || names[1], "");
+    keep("#keeper1", keepers[0], "Geen keeper"); keep("#keeper2", keepers[1], "Geen keeper");
+    $("#ruleList").innerHTML = rules.map((r, i) => `<span class="chip">${escapeHTML(r.a)} + ${escapeHTML(r.b)} ${r.type}<button type="button" data-r="${i}" aria-label="Verwijder regel">×</button></span>`).join("");
+    $("#ruleList").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+      rules.splice(+b.dataset.r, 1); saveOpts(); renderOpts();
+    }));
+    const n = rules.length + (keepers[0] && keepers[1] ? 1 : 0);
+    $("#optsCount").hidden = n === 0;
+    $("#optsCount").textContent = n + " actief";
+  }
+  $("#ruleAdd").addEventListener("click", () => {
+    const a = $("#ruleA").value, b = $("#ruleB").value, type = $("#ruleType").value;
+    if (a === b) { showStatus("Kies twee verschillende spelers.", true); return; }
+    if (rules.some((r) => (r.a === a && r.b === b) || (r.a === b && r.b === a))) { showStatus("Voor dit tweetal bestaat al een regel.", true); return; }
+    rules.push({ a, b, type }); saveOpts(); renderOpts();
+  });
+  ["#keeper1", "#keeper2"].forEach((id, i) => $(id).addEventListener("change", (e) => {
+    keepers[i] = e.target.value;
+    if (keepers[0] && keepers[0] === keepers[1]) { keepers[1 - i] = ""; }
+    saveOpts(); renderOpts();
+  }));
+  function meetsPrefs(s) {
+    const side = {};
+    s.teamA.forEach((p) => (side[p.name] = "A"));
+    s.teamB.forEach((p) => (side[p.name] = "B"));
+    for (const r of rules) {
+      if (side[r.a] && side[r.b] && (r.type === "samen") !== (side[r.a] === side[r.b])) return false;
+    }
+    return !(side[keepers[0]] && side[keepers[1]] && side[keepers[0]] === side[keepers[1]]);
+  }
 
   function flashMsg(el, msg, isError) {
     el._t && clearTimeout(el._t);
@@ -551,8 +640,10 @@
   function onGenerate() {
     const sel = players.filter((p) => p.selected);
     if (sel.length < 6 || sel.length > 11) { showStatus("Kies tussen de 6 en 11 spelers.", true); return; }
-    allSplits = generateAllSplits(sel);
-    if (allSplits.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal.", true); return; }
+    const all = generateAllSplits(sel);
+    if (all.length === 0) { showStatus("Geen geldige teamindeling gevonden voor dit aantal.", true); return; }
+    allSplits = all.filter(meetsPrefs);
+    if (allSplits.length === 0) { showStatus("Geen indeling mogelijk met deze voorkeuren.", true); return; }
     baselineDiff = allSplits[0].diff;
     currentIndex = 0;
     deelnemers = sel.length;
@@ -660,6 +751,7 @@
      INIT
      ============================================================ */
   buildRoster();
+  renderOpts();
   updateCounter();
 })();
 </script>
