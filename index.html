@@ -190,7 +190,9 @@
   .balance-full { margin-top: 12px; }
   .balance-full .row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
   .balance-full .row .a { color: var(--teamA); } .balance-full .row .b { color: var(--teamB); }
-  .balance-full .bar { height: 10px; border-radius: 6px; overflow: hidden; display: flex; background: var(--surface-2); }
+  .balance-full .bar { position: relative; height: 12px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
+  .balance-full .bar::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--text-faint); z-index: 1; }
+  .balance-full .fill { position: absolute; top: 0; bottom: 0; width: 0; transition: width .3s, left .3s; }
   .balance-full .tag { text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 8px; font-weight: 600; }
 
   .back-btn { margin-top: 22px; }
@@ -289,7 +291,7 @@
       </div>
       <div class="balance-full">
         <div class="row"><span class="a">◀ Team A</span><span class="b">Team B ▶</span></div>
-        <div class="bar"><div id="balBarA" style="background:var(--teamA)"></div><div id="balBarB" style="background:var(--teamB)"></div></div>
+        <div class="bar"><div class="fill" id="balFill"></div></div>
         <div class="tag" id="balTag"></div>
       </div>
     </div>
@@ -510,9 +512,6 @@
 
   function renderResult() {
     const s = allSplits[currentIndex];
-    const totalAvg = s.avgA + s.avgB;
-    const wA = ((s.avgA / totalAvg) * 100).toFixed(1);
-    const wB = (100 - wA).toFixed(1);
     const isBest = currentIndex === 0;
     const fairLabel = isBest
       ? "Meest eerlijke indeling"
@@ -524,9 +523,16 @@
     fairLine.classList.toggle("best", isBest);
     $("#teamAList").innerHTML = teamPlayersHTML(s.teamA);
     $("#teamBList").innerHTML = teamPlayersHTML(s.teamB);
-    $("#balBarA").style.width = wA + "%";
-    $("#balBarB").style.width = wB + "%";
-    $("#balTag").textContent = balanceTag(s.diff);
+    // balk begint in het midden en groeit richting het sterkste team; volle halve balk = de scheefste indeling van deze selectie
+    const worstDiff = allSplits[allSplits.length - 1].diff || 1;
+    const half = Math.min(s.diff / worstDiff, 1) * 50;
+    const aStronger = s.avgA > s.avgB;
+    const fill = $("#balFill");
+    fill.style.width = half + "%";
+    fill.style.left = (aStronger ? 50 - half : 50) + "%";
+    fill.style.background = aStronger ? "var(--teamA)" : "var(--teamB)";
+    const sterker = s.diff < 0.1 ? "" : ` · Team ${aStronger ? "A" : "B"} is sterker`;
+    $("#balTag").textContent = balanceTag(s.diff) + sterker;
 
     $("#prevBtn").disabled = currentIndex === 0;
     $("#nextBtn").disabled = currentIndex + 1 >= allSplits.length;
