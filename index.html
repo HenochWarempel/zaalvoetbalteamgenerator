@@ -198,6 +198,10 @@
   .mrow .mt b { margin: 0 4px; font-size: 14px; }
   .mrow button { flex: none; border: none; background: var(--surface-2); color: var(--text-dim); border-radius: 8px; padding: 6px 9px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
   .mrow button.armed { background: var(--danger); color: #fff; }
+  .opts input[type=url], .opts input[type=text] {
+    min-width: 0; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 14px;
+  }
   .backup { margin-top: 16px; }
   .backup textarea { width: 100%; min-height: 80px; resize: vertical; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 12px; }
   .backup .btnrow { margin-top: 8px; }
@@ -457,6 +461,26 @@
     </div>
     <div id="standBody"></div>
 
+    <details class="card opts backup" id="syncBox">
+      <summary>Synchroniseren tussen apparaten <span class="pill" id="syncBadge" hidden>aan</span></summary>
+      <div class="opts-body">
+        <p class="legend" style="margin:0" id="syncStatus">Niet gekoppeld. Uitslagen staan alleen op dit apparaat.</p>
+        <div id="syncForm" class="opts-body" style="padding:0">
+          <input type="url" id="syncUrl" placeholder="Web-app-URL van Google Apps Script" autocomplete="off" spellcheck="false">
+          <input type="text" id="syncToken" placeholder="Wachtwoord (TOKEN uit het script)" autocomplete="off" spellcheck="false">
+          <button type="button" class="btn primary" id="syncConnect">Koppel</button>
+        </div>
+        <div id="syncOn" class="opts-body" style="padding:0" hidden>
+          <div class="btnrow" style="margin-top:0">
+            <button type="button" class="btn ghost" id="syncNowBtn" style="flex:1">Nu synchroniseren</button>
+            <button type="button" class="btn ghost" id="syncOff" style="flex:1">Ontkoppel</button>
+          </div>
+          <p class="legend" style="margin:0">Open deze link op een ander apparaat om het daar te koppelen. Deel hem alleen met mensen die de uitslagen mogen zien.</p>
+          <textarea id="syncLink" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+    </details>
+
     <details class="card opts backup">
       <summary>Back-up</summary>
       <div class="opts-body">
@@ -634,7 +658,7 @@
   $("#guestCancel").addEventListener("click", () => { guestForm.reset(); toggleGuestForm(false); });
   guestForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const name = guestName.value.trim();
+    const name = guestName.value.replace(/,/g, " ").trim();
     const rank = parseFloat(guestScore.value);
     if (!name) { showStatus("Vul een naam in.", true); return; }
     if (isNaN(rank) || rank < 1 || rank > 10) { showStatus("Score moet tussen 1 en 10 liggen.", true); return; }
@@ -851,8 +875,10 @@
   $("#saveResultBtn").addEventListener("click", () => {
     const a = parseInt($("#goalsA").value, 10), b = parseInt($("#goalsB").value, 10);
     if (!(a >= 0) || !(b >= 0)) { showStatus("Vul de doelpunten van beide teams in.", true); return; }
-    matches.push({ id: Date.now(), date: new Date().toISOString(), teamA: pending.teamA, teamB: pending.teamB, goalsA: a, goalsB: b });
+    const match = { id: Date.now(), date: new Date().toISOString(), teamA: pending.teamA, teamB: pending.teamB, goalsA: a, goalsB: b };
+    matches.push(match);
     saveStore(STORE_KEY, matches);
+    recordOp({ op: "add", match });
     pending = null; saveStore(PENDING_KEY, null);
     showStatus("Uitslag opgeslagen");
     showView("stand");
@@ -927,6 +953,7 @@
       }
       matches = matches.filter((m) => String(m.id) !== btn.dataset.id);
       saveStore(STORE_KEY, matches);
+      recordOp({ op: "del", id: Number(btn.dataset.id) });
       renderStand();
     }));
   }
@@ -953,6 +980,81 @@
       `<p class="legend">Win% · aantal wedstrijden · W-GL-V · doelsaldo. Teams met minstens 2 wedstrijden staan bovenaan, gerangschikt op Win%.</p>`;
   }
 
+  /* --- synchroniseren via Google Apps Script (zie SYNC.md) --- */
+  const SYNC_KEY = "zv-sync", QUEUE_KEY = "zv-wachtrij";
+  let syncCfg = loadStore(SYNC_KEY, null);
+  if (syncCfg && !(syncCfg.url && syncCfg.token)) syncCfg = null;
+  let syncQueue = loadStore(QUEUE_KEY, []);
+  if (!Array.isArray(syncQueue)) syncQueue = [];
+  let syncing = false;
+  const setSyncStatus = (t) => { $("#syncStatus").textContent = t; };
+  const hhmm = () => new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+
+  async function syncApi(body) {
+    const { url, token } = syncCfg;
+    const r = body
+      ? await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ token }, body)) })
+      : await fetch(url + (url.includes("?") ? "&" : "?") + "token=" + encodeURIComponent(token));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    return j;
+  }
+  async function syncNow() {
+    if (!syncCfg || syncing) return;
+    syncing = true;
+    setSyncStatus("Synchroniseren…");
+    try {
+      if (syncQueue.length) { await syncApi({ ops: syncQueue }); syncQueue = []; saveStore(QUEUE_KEY, syncQueue); }
+      const j = await syncApi();
+      matches = (j.matches || []).filter(validMatch);
+      saveStore(QUEUE_KEY, syncQueue);
+      saveStore(STORE_KEY, matches);
+      setSyncStatus(`Gekoppeld · gesynchroniseerd om ${hhmm()}`);
+      if (!$("#view-stand").hidden) renderStand();
+      if (!$("#view-teams").hidden) renderTeams();
+    } catch (e) {
+      setSyncStatus("Synchroniseren niet gelukt. Wijzigingen staan lokaal en worden later opnieuw verstuurd.");
+    }
+    syncing = false;
+  }
+  function recordOp(op) {
+    if (!syncCfg) return;
+    syncQueue.push(op);
+    saveStore(QUEUE_KEY, syncQueue);
+    syncNow();
+  }
+  function renderSyncUI() {
+    const on = !!syncCfg;
+    $("#syncForm").hidden = on;
+    $("#syncOn").hidden = !on;
+    $("#syncBadge").hidden = !on;
+    if (on) {
+      try { $("#syncLink").value = location.href.split("#")[0] + "#koppel=" + encodeURIComponent(btoa(JSON.stringify(syncCfg))); } catch (e) {}
+    } else {
+      setSyncStatus("Niet gekoppeld. Uitslagen staan alleen op dit apparaat.");
+    }
+  }
+  function connectSync(cfg) {
+    syncCfg = cfg;
+    saveStore(SYNC_KEY, cfg);
+    syncQueue = matches.map((match) => ({ op: "add", match }));
+    saveStore(QUEUE_KEY, syncQueue);
+    renderSyncUI();
+    syncNow();
+  }
+  $("#syncConnect").addEventListener("click", () => {
+    const url = $("#syncUrl").value.trim(), token = $("#syncToken").value.trim();
+    if (!/^https:\/\/script\.google\.com\//.test(url) || !token) { showStatus("Vul de web-app-URL en het wachtwoord in.", true); return; }
+    connectSync({ url, token });
+  });
+  $("#syncNowBtn").addEventListener("click", syncNow);
+  $("#syncOff").addEventListener("click", () => {
+    syncCfg = null; syncQueue = [];
+    saveStore(SYNC_KEY, null); saveStore(QUEUE_KEY, null);
+    renderSyncUI();
+  });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") syncNow(); });
+
   /* --- back-up --- */
   $("#backupMake").addEventListener("click", () => {
     const ta = $("#backupText");
@@ -967,6 +1069,7 @@
     if (!Array.isArray(data) || !data.every(validMatch)) { showStatus("Dit is geen geldige back-up.", true); return; }
     matches = data.map((m, i) => Object.assign({ id: Date.now() + i, date: new Date().toISOString() }, m));
     saveStore(STORE_KEY, matches);
+    recordOp({ op: "replace", matches });
     renderStand();
     showStatus(`${matches.length} wedstrijden hersteld`);
   });
@@ -1038,6 +1141,17 @@
   buildRoster();
   renderOpts();
   updateCounter();
+  const pair = location.hash.match(/^#koppel=(.+)$/);
+  if (pair) {
+    try {
+      const cfg = JSON.parse(atob(decodeURIComponent(pair[1])));
+      if (/^https:\/\/script\.google\.com\//.test(cfg.url) && cfg.token) connectSync({ url: cfg.url, token: String(cfg.token) });
+    } catch (e) {}
+    history.replaceState(null, "", location.pathname + location.search);
+    showStatus("Gekoppeld met Google Sheet");
+  }
+  renderSyncUI();
+  syncNow();
   if (pending) { renderPlay(); showView("play"); }
 })();
 </script>
