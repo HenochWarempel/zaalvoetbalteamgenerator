@@ -281,13 +281,6 @@
           </div>
           <div class="chips" id="ruleList"></div>
         </div>
-        <div>
-          <h3>Keepers (in verschillende teams)</h3>
-          <div class="fields">
-            <select id="keeper1" aria-label="Keeper 1"></select>
-            <select id="keeper2" aria-label="Keeper 2"></select>
-          </div>
-        </div>
       </div>
     </details>
 
@@ -525,30 +518,26 @@
     showStatus(`${name} is toegevoegd`);
   });
 
-  /* voorkeuren: samen/apart-regels en keepers (optioneel, onthouden op dit apparaat) */
-  let rules = [], keepers = ["", ""];
+  /* voorkeuren: samen/apart-regels (optioneel, onthouden op dit apparaat) */
+  let rules = [];
   try {
     const saved = JSON.parse(localStorage.getItem("zv-voorkeuren") || "null");
-    if (saved) { rules = saved.rules || []; keepers = saved.keepers || ["", ""]; }
+    if (saved) rules = saved.rules || [];
   } catch (e) {}
-  function saveOpts() { try { localStorage.setItem("zv-voorkeuren", JSON.stringify({ rules, keepers })); } catch (e) {} }
+  function saveOpts() { try { localStorage.setItem("zv-voorkeuren", JSON.stringify({ rules })); } catch (e) {} }
 
   function renderOpts() {
     const names = players.map((p) => p.name);
-    keepers = keepers.map((k) => (names.includes(k) ? k : ""));
-    const opts = (cur, blank) => (blank ? '<option value="">' + blank + "</option>" : "") +
-      names.map((n) => `<option value="${escapeHTML(n)}"${n === cur ? " selected" : ""}>${escapeHTML(n)}</option>`).join("");
-    const keep = (id, cur, blank) => { $(id).innerHTML = opts(cur, blank); };
+    const opts = (cur) => names.map((n) => `<option value="${escapeHTML(n)}"${n === cur ? " selected" : ""}>${escapeHTML(n)}</option>`).join("");
     const ra = $("#ruleA").value, rb = $("#ruleB").value;
-    keep("#ruleA", ra || names[0], ""); keep("#ruleB", rb || names[1], "");
-    keep("#keeper1", keepers[0], "Geen keeper"); keep("#keeper2", keepers[1], "Geen keeper");
+    $("#ruleA").innerHTML = opts(ra || names[0]);
+    $("#ruleB").innerHTML = opts(rb || names[1]);
     $("#ruleList").innerHTML = rules.map((r, i) => `<span class="chip">${escapeHTML(r.a)} + ${escapeHTML(r.b)} ${r.type}<button type="button" data-r="${i}" aria-label="Verwijder regel">×</button></span>`).join("");
     $("#ruleList").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
       rules.splice(+b.dataset.r, 1); saveOpts(); renderOpts();
     }));
-    const n = rules.length + (keepers[0] && keepers[1] ? 1 : 0);
-    $("#optsCount").hidden = n === 0;
-    $("#optsCount").textContent = n + " actief";
+    $("#optsCount").hidden = rules.length === 0;
+    $("#optsCount").textContent = rules.length + " actief";
   }
   $("#ruleAdd").addEventListener("click", () => {
     const a = $("#ruleA").value, b = $("#ruleB").value, type = $("#ruleType").value;
@@ -556,11 +545,6 @@
     if (rules.some((r) => (r.a === a && r.b === b) || (r.a === b && r.b === a))) { showStatus("Voor dit tweetal bestaat al een regel.", true); return; }
     rules.push({ a, b, type }); saveOpts(); renderOpts();
   });
-  ["#keeper1", "#keeper2"].forEach((id, i) => $(id).addEventListener("change", (e) => {
-    keepers[i] = e.target.value;
-    if (keepers[0] && keepers[0] === keepers[1]) { keepers[1 - i] = ""; }
-    saveOpts(); renderOpts();
-  }));
   function meetsPrefs(s) {
     const side = {};
     s.teamA.forEach((p) => (side[p.name] = "A"));
@@ -568,7 +552,7 @@
     for (const r of rules) {
       if (side[r.a] && side[r.b] && (r.type === "samen") !== (side[r.a] === side[r.b])) return false;
     }
-    return !(side[keepers[0]] && side[keepers[1]] && side[keepers[0]] === side[keepers[1]]);
+    return true;
   }
 
   function flashMsg(el, msg, isError) {
