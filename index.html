@@ -405,12 +405,6 @@
     splits.sort((a, b) => a.diff - b.diff);
     return splits;
   }
-  function balanceTag(diff) {
-    if (diff < 0.1)  return "Vrijwel perfect in balans";
-    if (diff < 0.25) return "Goed gebalanceerd";
-    if (diff < 0.5)  return "Redelijk eerlijk";
-    return "Duidelijk scheve verdeling";
-  }
 
   /* ============================================================
      UI helpers
@@ -531,8 +525,10 @@
     fill.style.width = half + "%";
     fill.style.left = (aStronger ? 50 - half : 50) + "%";
     fill.style.background = aStronger ? "var(--teamA)" : "var(--teamB)";
-    const sterker = s.diff < 0.1 ? "" : ` · Team ${aStronger ? "A" : "B"} is sterker`;
-    $("#balTag").textContent = balanceTag(s.diff) + sterker;
+    const pct = (Math.abs(s.avgA - s.avgB) / Math.min(s.avgA, s.avgB)) * 100;
+    $("#balTag").textContent = pct.toFixed(1) === "0.0"
+      ? "Teams zijn even sterk"
+      : `Team ${aStronger ? "A" : "B"} is ${pct.toFixed(1).replace(".", ",")}% sterker`;
 
     $("#prevBtn").disabled = currentIndex === 0;
     $("#nextBtn").disabled = currentIndex + 1 >= allSplits.length;
